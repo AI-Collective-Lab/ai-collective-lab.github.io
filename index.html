@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Collective Lab</title>
+<meta name="description" content="A small group building machine-learning projects together. Every project ships with its code, its numbers, and the cases where the model gets it wrong.">
+<link rel="canonical" href="https://ai-collective-lab.github.io/">
+<meta name="theme-color" content="#f3f5fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#071122" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ai-collective-lab.github.io/">
+<meta property="og:title" content="AI Collective Lab">
+<meta property="og:description" content="Machine-learning projects, built together and published in full: code, results and failure cases.">
+<meta property="og:image" content="https://ai-collective-lab.github.io/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="assets/favicon-64.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f3f5fa; --surface:#ffffff; --ink:#0a1430; --muted:#46516e; --line:#d5dbe8;
+  --blue:#1f6fe0; --violet:#6d43d4; --plate:#ffffff;
+  --display:"Archivo",system-ui,sans-serif; --body:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+  --wrap:1180px; --gutter:clamp(16px,4vw,40px);
+}
+@media (prefers-color-scheme:dark){
+  :root{--paper:#071122; --surface:#0d1a33; --ink:#e6ecf8; --muted:#a3b0cc; --line:#1f2e4d;
+    --blue:#5bb2f5; --violet:#ae91f7; --plate:#f7f9fc}
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; -webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0; background:var(--paper); color:var(--ink); font:400 17px/1.6 var(--body); overflow-x:hidden}
+img{max-width:100%; height:auto; display:block}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--blue); outline-offset:3px; border-radius:4px}
+.wrap{max-width:var(--wrap); margin:0 auto; padding:0 var(--gutter)}
+.skip{position:absolute; left:-999px; top:8px; background:var(--ink); color:var(--paper); padding:8px 12px; z-index:10}
+.skip:focus{left:8px}
+
+/* header */
+.site-head{position:sticky; top:0; z-index:5; background:color-mix(in srgb,var(--paper) 88%,transparent); backdrop-filter:blur(8px); border-bottom:1px solid var(--line)}
+.site-head .wrap{display:flex; align-items:center; justify-content:space-between; gap:16px; height:60px}
+.brand{display:flex; align-items:center; gap:10px; text-decoration:none; font:700 15px/1 var(--display); font-stretch:112%; letter-spacing:.01em; white-space:nowrap}
+.brand img{width:30px; height:30px}
+.nav{display:flex; gap:clamp(12px,3vw,28px); font:500 13px/1 var(--mono); text-transform:lowercase}
+.nav a{text-decoration:none; color:var(--muted)}
+.nav a:hover{color:var(--ink)}
+@media (max-width:520px){.nav .opt{display:none}}
+
+/* hero */
+.hero{padding:clamp(40px,8vw,96px) 0 clamp(40px,6vw,72px)}
+.hero .wrap{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.05fr); gap:clamp(24px,5vw,64px); align-items:center}
+@media (max-width:880px){.hero .wrap{grid-template-columns:minmax(0,1fr)}}
+.badge{display:inline-flex; align-items:center; gap:8px; font:500 12px/1 var(--mono); letter-spacing:.06em; text-transform:uppercase; color:var(--muted); border:1px solid var(--line); border-radius:99px; padding:7px 12px; background:var(--surface)}
+.badge i{width:7px; height:7px; border-radius:50%; background:#1fae6b; box-shadow:0 0 0 3px color-mix(in srgb,#1fae6b 25%,transparent)}
+h1{font:800 clamp(44px,8.2vw,92px)/.92 var(--display); font-stretch:125%; letter-spacing:-.035em; margin:22px 0 22px}
+h1 .grad{background:linear-gradient(90deg,var(--blue),var(--violet)); -webkit-background-clip:text; background-clip:text; color:transparent}
+.lede{font-size:clamp(18px,2vw,20px); color:var(--muted); max-width:34em; margin:0 0 30px}
+.lede strong{color:var(--ink); font-weight:600}
+.ctas{display:flex; flex-wrap:wrap; gap:12px}
+.btn{display:inline-flex; align-items:center; gap:8px; padding:13px 20px; border-radius:10px; font:600 15px/1 var(--body); text-decoration:none; border:1px solid var(--ink)}
+.btn.primary{background:var(--ink); color:var(--paper)}
+.btn.primary:hover{background:var(--blue); border-color:var(--blue)}
+.btn.ghost:hover{background:var(--surface)}
+
+/* signature: attention graph */
+.graph{margin:0; background:var(--surface); border:1px solid var(--line); border-radius:16px; overflow:hidden}
+.graph canvas{display:block; width:100%; aspect-ratio:5/4; cursor:crosshair; touch-action:manipulation}
+.graph figcaption{display:flex; flex-wrap:wrap; justify-content:space-between; gap:6px 16px; padding:12px 16px; border-top:1px solid var(--line); font:400 12.5px/1.5 var(--mono); color:var(--muted)}
+.legend{display:flex; flex-wrap:wrap; gap:4px 14px}
+.legend span::before{content:""; display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; background:var(--c); vertical-align:1px}
+
+/* sections */
+section{padding:clamp(56px,8vw,96px) 0; border-top:1px solid var(--line)}
+.eyebrow{font:500 12px/1 var(--mono); letter-spacing:.12em; text-transform:uppercase; color:var(--blue); margin:0 0 14px}
+h2{font:750 clamp(30px,4.6vw,48px)/1.02 var(--display); font-stretch:118%; letter-spacing:-.025em; margin:0 0 14px}
+.section-intro{color:var(--muted); max-width:40em; margin:0 0 44px}
+
+/* project plates */
+.plate{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.15fr); gap:clamp(24px,4vw,48px); padding:clamp(20px,3.5vw,40px); background:var(--surface); border:1px solid var(--line); border-radius:18px; margin-bottom:28px}
+.plate.flag{grid-template-columns:minmax(0,1fr); gap:0}
+.plate.flag .cols{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:clamp(24px,4vw,48px); margin-bottom:8px}
+@media (max-width:880px){.plate,.plate.flag .cols{grid-template-columns:minmax(0,1fr)}}
+.kicker{font:500 12px/1.4 var(--mono); color:var(--muted); letter-spacing:.04em; margin:0 0 10px}
+.kicker b{color:var(--violet); font-weight:500}
+h3{font:750 clamp(26px,3.4vw,36px)/1.05 var(--display); font-stretch:110%; letter-spacing:-.02em; margin:0 0 6px}
+.sub{font-weight:500; margin:0 0 16px}
+.plate p{margin:0 0 16px}
+.plate ul{margin:0 0 18px; padding-left:20px}
+.plate li{margin-bottom:6px}
+.plate li::marker{color:var(--blue)}
+.metrics{display:grid; grid-template-columns:repeat(var(--cols,3),minmax(0,1fr)); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:12px; overflow:hidden; margin:0 0 20px}
+.metrics div{background:var(--surface); padding:12px 14px; min-width:0}
+.metrics dt{font:400 11.5px/1.3 var(--mono); color:var(--muted); text-transform:uppercase; letter-spacing:.05em}
+.metrics dd{margin:4px 0 0; font:700 22px/1.1 var(--display); font-stretch:105%; font-variant-numeric:tabular-nums}
+.metrics dd small{font:400 12px var(--mono); color:var(--muted); margin-left:2px}
+.metrics.two{--cols:2}
+@media (max-width:420px){.metrics:not(.vs){--cols:2}}
+.metrics.vs dd{font-size:18px}
+.metrics.vs dd small{display:block; margin:3px 0 0}
+.plate .tags{display:flex; flex-wrap:wrap; gap:6px; margin:0 0 20px; padding:0; list-style:none}
+.plate .tags li{font:400 12px/1 var(--mono); padding:6px 9px; border-radius:6px; background:color-mix(in srgb,var(--blue) 9%,transparent); margin:0}
+.links{display:flex; flex-wrap:wrap; gap:10px 18px; align-items:center; font:500 14px/1.2 var(--body)}
+.links a{text-decoration:none; border-bottom:1.5px solid var(--blue); padding-bottom:3px}
+.links a:hover{color:var(--blue)}
+.team{display:flex; align-items:center; gap:10px 14px; margin-top:22px; padding-top:18px; border-top:1px dashed var(--line); font:400 13px/1.3 var(--mono); color:var(--muted); flex-wrap:wrap}
+.team a{display:inline-flex; align-items:center; gap:7px; text-decoration:none; color:var(--ink); overflow-wrap:anywhere; min-width:0}
+.team img{width:26px; height:26px; border-radius:50%; border:1px solid var(--line); flex:none}
+figure.fig{margin:0; align-self:start; min-width:0}
+figure.fig .frame{background:var(--plate); border:1px solid var(--line); border-radius:12px; padding:10px; overflow:hidden}
+figure.fig figcaption{font:400 12.5px/1.5 var(--mono); color:var(--muted); margin-top:10px}
+figure.fig figcaption b{color:var(--ink); font-weight:500}
+
+/* people */
+.people{display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr)); gap:16px}
+.person{display:flex; gap:16px; align-items:center; padding:18px; background:var(--surface); border:1px solid var(--line); border-radius:14px; text-decoration:none; min-width:0}
+.person:hover{border-color:var(--blue)}
+.person img{width:56px; height:56px; border-radius:50%; flex:none}
+.person > span{min-width:0}
+.person .h{font:600 16px/1.3 var(--body); overflow-wrap:anywhere}
+.person .r{font:400 13px/1.45 var(--mono); color:var(--muted)}
+
+/* join */
+.join{display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:clamp(24px,4vw,48px); align-items:start}
+@media (max-width:880px){.join{grid-template-columns:minmax(0,1fr)}}
+.steps{margin:0; padding:0; list-style:none; counter-reset:s}
+.steps li{counter-increment:s; display:grid; grid-template-columns:34px minmax(0,1fr); gap:12px; align-items:center; padding:14px 0; border-bottom:1px solid var(--line)}
+.steps li::before{content:counter(s); font:600 13px/26px var(--mono); text-align:center; width:26px; height:26px; border-radius:50%; border:1px solid var(--line); color:var(--blue)}
+
+footer{border-top:1px solid var(--line); padding:28px 0 40px; font:400 13px/1.6 var(--mono); color:var(--muted)}
+footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10px}
+</style>
+</head>
+<body>
+<a class="skip" href="#projects">Skip to projects</a>
+
+<header class="site-head">
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="assets/logo-320.png" alt="" width="30" height="30">AI Collective Lab</a>
+    <nav class="nav" aria-label="Main">
+      <a href="#projects">projects</a>
+      <a href="#people" class="opt">people</a>
+      <a href="#join">join</a>
+      <a href="https://github.com/AI-Collective-Lab">github</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <div class="hero">
+    <div class="wrap">
+      <div>
+        <span class="badge"><i></i>Open to collaborators</span>
+        <h1>AI <span class="grad">Collective</span> Lab</h1>
+        <p class="lede">A small group building machine-learning projects together. Every project ships with <strong>its code, its numbers, and the cases where the model gets it wrong.</strong></p>
+        <div class="ctas">
+          <a class="btn primary" href="#projects">See the projects</a>
+          <a class="btn ghost" href="#join">Join a project</a>
+        </div>
+      </div>
+      <figure class="graph">
+        <canvas id="attn" aria-hidden="true"></canvas>
+        <figcaption>
+          <span id="attn-caption">The lab as a graph. Each node attends to its 5 nearest neighbours, as in LatentGAT's bottleneck. Hover or tap a node.</span>
+          <span class="legend"><span style="--c:var(--blue)">project</span><span style="--c:var(--violet)">method</span><span style="--c:#8a96b3">dataset</span><span style="--c:#1fae6b">member</span></span>
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+
+  <section id="projects">
+    <div class="wrap">
+      <p class="eyebrow">Projects</p>
+      <h2>What we've built</h2>
+      <p class="section-intro">Three research projects, each with its full code and results in the open. The figures below come straight from the repositories.</p>
+
+      <article class="plate flag" aria-labelledby="p-latentgat">
+        <div class="cols">
+          <div>
+            <p class="kicker"><b>Flagship</b> · Medical imaging · PyTorch</p>
+            <h3 id="p-latentgat">LatentGAT</h3>
+            <p class="sub">Brain tumour segmentation with graph attention at the U-Net bottleneck</p>
+            <p>A 3D U-Net whose bottleneck is treated as a graph: each latent node attends to its 5 nearest neighbours across 4 heads, so distant tumour sub-regions share context before decoding. Trained on BraTS2021 (1,251 cases), then tested on three cohorts it had never seen.</p>
+            <ul>
+              <li>Checkpoint chosen by combined Dice + HD95 + NSD rank, not peak Dice alone.</li>
+              <li>Failure analysis: across all 251 validation patients, 11.7% of necrotic-core voxels are labelled as edema. The worst cases are an intensified version of that same pattern.</li>
+              <li>The 4-view test-time augmentation doubles as a per-voxel uncertainty map.</li>
+            </ul>
+          </div>
+          <div>
+            <dl class="metrics">
+              <div><dt>Dice</dt><dd>0.869</dd></div>
+              <div><dt>HD95</dt><dd>8.67<small>mm</small></dd></div>
+              <div><dt>NSD</dt><dd>0.894</dd></div>
+              <div><dt>Parameters</dt><dd>1.87<small>M</small></dd></div>
+              <div><dt>Val. patients</dt><dd>251</dd></div>
+              <div><dt>Ext. cohorts</dt><dd>3</dd></div>
+            </dl>
+            <figure class="fig">
+              <div class="frame"><img src="assets/latentgat-gradcam.webp" width="1600" height="816" loading="lazy" alt="Grad-CAM maps for the best and worst segmented brain scans, shown next to the FLAIR image, ground truth and prediction."></div>
+              <figcaption><b>Fig. 1</b> Grad-CAM on the last decoder layer for the best (rank 1) and worst (rank 251) validation cases.</figcaption>
+            </figure>
+          </div>
+        </div>
+        <ul class="tags"><li>3D U-Net</li><li>Graph attention</li><li>BraTS2021</li><li>UCSF-PDGM</li><li>BraTS-Africa</li><li>Test-time augmentation</li></ul>
+        <div class="links">
+          <a href="https://muhammad-azeem-bhatti.github.io/latentgat-training-dashboard/">Open the research pages</a>
+          <a href="https://github.com/Muhammad-Azeem-Bhatti/latentgat-training-dashboard">Source</a>
+        </div>
+        <div class="team">Team
+          <a href="https://github.com/Muhammad-Azeem-Bhatti"><img src="https://github.com/Muhammad-Azeem-Bhatti.png?size=52" alt="" width="26" height="26" loading="lazy">@Muhammad-Azeem-Bhatti</a>
+        </div>
+      </article>
+
+      <article class="plate" aria-labelledby="p-balancing">
+        <div>
+          <p class="kicker">Research · Computer vision · PyTorch</p>
+          <h3 id="p-balancing">GAN-balanced plant disease classification</h3>
+          <p class="sub">Does generating minority-class images fix an imbalanced dataset?</p>
+          <p>A GAN generates extra leaf images for the under-represented classes of a 38-class plant disease dataset. A custom CNN is then trained on the balanced set and checked with 5-fold cross-validation.</p>
+          <dl class="metrics two">
+            <div><dt>Accuracy</dt><dd>98.19<small>%</small></dd></div>
+            <div><dt>Macro F1</dt><dd>0.982</dd></div>
+            <div><dt>5-fold F1</dt><dd>0.982<small>±.002</small></dd></div>
+            <div><dt>Classes</dt><dd>38</dd></div>
+          </dl>
+          <ul class="tags"><li>GAN</li><li>CNN</li><li>Class imbalance</li><li>K-fold</li></ul>
+          <div class="links">
+            <a href="https://github.com/AI-Collective-Lab/Effectiveness-Of-Balancing-Dataset-On-Classification">Source</a>
+            <a href="https://www.kaggle.com/datasets/muhammadazeemaif25/plant-disease-imbalanced-vs-gan-balanced">Dataset on Kaggle</a>
+          </div>
+          <div class="team">Team
+            <a href="https://github.com/Muhammad-Azeem-Bhatti"><img src="https://github.com/Muhammad-Azeem-Bhatti.png?size=52" alt="" width="26" height="26" loading="lazy">@Muhammad-Azeem-Bhatti</a>
+            <a href="https://github.com/munahilamin03"><img src="https://github.com/munahilamin03.png?size=52" alt="" width="26" height="26" loading="lazy">@munahilamin03</a>
+          </div>
+        </div>
+        <figure class="fig">
+          <div class="frame"><img src="assets/balancing-learning-curves.webp" width="1200" height="500" loading="lazy" alt="Training and validation loss falling and accuracy rising to about 98% over 10 epochs."></div>
+          <figcaption><b>Fig. 2</b> Loss and accuracy over 10 epochs on the GAN-balanced training set.</figcaption>
+        </figure>
+      </article>
+
+      <article class="plate" aria-labelledby="p-higgs">
+        <div>
+          <p class="kicker">Research · Particle physics data · scikit-learn</p>
+          <h3 id="p-higgs">HIGGS: logistic regression vs neural network</h3>
+          <p class="sub">How much does model capacity matter at 11 million samples?</p>
+          <p>Both models were trained on 16 slices of the HIGGS collision dataset (11M events, 28 features), from 1% to 100%, to find where extra data stops paying off. The network's accuracy is already 76.6% at 30% of the data and only reaches 76.8% at 100%.</p>
+          <dl class="metrics vs">
+            <div><dt>ROC-AUC</dt><dd>0.852<small>LR 0.684</small></dd></div>
+            <div><dt>Accuracy</dt><dd>76.8%<small>LR 64.1%</small></dd></div>
+            <div><dt>Train time</dt><dd>3,204s<small>LR 87s</small></dd></div>
+          </dl>
+          <ul class="tags"><li>MLP</li><li>Logistic regression</li><li>Scaling study</li><li>ROC / PR</li></ul>
+          <div class="links">
+            <a href="https://github.com/Muhammad-Azeem-Bhatti/HIGGS-ML-Classification">Source</a>
+            <a href="https://github.com/Muhammad-Azeem-Bhatti/HIGGS-ML-Classification/blob/main/paper/REPORT.pdf">Read the report (PDF)</a>
+          </div>
+          <div class="team">Team
+            <a href="https://github.com/Muhammad-Azeem-Bhatti"><img src="https://github.com/Muhammad-Azeem-Bhatti.png?size=52" alt="" width="26" height="26" loading="lazy">@Muhammad-Azeem-Bhatti</a>
+          </div>
+        </div>
+        <figure class="fig">
+          <div class="frame"><img src="assets/higgs-roc.webp" width="1000" height="746" loading="lazy" alt="ROC curves: the neural network (AUC 0.852) sits well above logistic regression (AUC 0.684)."></div>
+          <figcaption><b>Fig. 3</b> ROC curves on the HIGGS test split. Big numbers above are the neural network; LR is logistic regression.</figcaption>
+        </figure>
+      </article>
+    </div>
+  </section>
+
+  <section id="people">
+    <div class="wrap">
+      <p class="eyebrow">People</p>
+      <h2>Who builds here</h2>
+      <p class="section-intro">Each project has its own team on GitHub. Credit goes to everyone who worked on it.</p>
+      <div class="people">
+        <a class="person" href="https://github.com/Muhammad-Azeem-Bhatti">
+          <img src="https://github.com/Muhammad-Azeem-Bhatti.png?size=112" alt="" width="56" height="56" loading="lazy">
+          <span><span class="h">Muhammad Azeem Bhatti</span><br><span class="r">Founder · LatentGAT, plant disease GAN, HIGGS</span></span>
+        </a>
+        <a class="person" href="https://github.com/munahilamin03">
+          <img src="https://github.com/munahilamin03.png?size=112" alt="" width="56" height="56" loading="lazy">
+          <span><span class="h">@munahilamin03</span><br><span class="r">Co-author · plant disease GAN</span></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section id="join">
+    <div class="wrap join">
+      <div>
+        <p class="eyebrow">Join</p>
+        <h2>Work on a project with us</h2>
+        <p class="section-intro">We're open to students and engineers who want to build, test and publish ML work in the open.</p>
+        <a class="btn primary" href="https://github.com/AI-Collective-Lab">Browse the repositories</a>
+      </div>
+      <ol class="steps">
+        <li><span>Pick a project and read its README.</span></li>
+        <li><span>Open an issue saying what you'd like to work on.</span></li>
+        <li><span>We add you to that project's team and credit you on this page.</span></li>
+      </ol>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 AI Collective Lab</span>
+    <a href="https://github.com/AI-Collective-Lab/ai-collective-lab.github.io">Site source</a>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const cv = document.getElementById('attn'); if (!cv) return;
+  const ctx = cv.getContext('2d');
+  const cap = document.getElementById('attn-caption');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const K = 5, TAU = 0.11;
+  // Real entities from the lab; x/y are layout positions in 0..1.
+  const N = [
+    ['LatentGAT','p',.50,.44],['Plant GAN','p',.22,.70],['HIGGS','p',.80,.74],
+    ['3D U-Net','m',.33,.24],['Graph attention','m',.66,.20],['GAN','m',.10,.48],['CNN','m',.36,.86],
+    ['MLP','m',.94,.52],['Logistic regression','m',.64,.92],['TTA','m',.58,.62],['K-fold','m',.08,.88],
+    ['BraTS2021','d',.47,.08],['UCSF-PDGM','d',.84,.36],['BraTS-Africa','d',.18,.28],['Plant disease (38)','d',.30,.55],['HIGGS 11M','d',.92,.92],
+    ['M. Azeem Bhatti','u',.76,.58],['@munahilamin03','u',.12,.64]
+  ].map(([label,t,x,y]) => ({label,t,x,y}));
+  const css = () => getComputedStyle(document.documentElement);
+  const v = name => css().getPropertyValue(name).trim();
+  const col = t => ({p:v('--blue'), m:v('--violet'), d:'#8a96b3', u:'#1fae6b'})[t];
+  let W=0, H=0, focus=0, t0=performance.now(), hover=-1;
+
+  function size(){
+    const dpr = Math.min(devicePixelRatio||1, 2), r = cv.getBoundingClientRect();
+    W=r.width; H=r.height; cv.width=W*dpr; cv.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); draw();
+  }
+  const P = n => [24 + n.x*(W-48), 22 + n.y*(H-44)];
+  const neighbours = i => N.map((b,j)=>({j, d:Math.hypot(N[i].x-b.x, N[i].y-b.y)}))
+    .filter(o=>o.j!==i).sort((p,q)=>p.d-q.d).slice(0,K);
+  function weights(nb){
+    const e = nb.map(o=>Math.exp(-o.d/TAU)), s = e.reduce((a,b)=>a+b,0);
+    return nb.map((o,k)=>({...o, w:e[k]/s}));
+  }
+  function draw(){
+    if(!W) return;
+    ctx.clearRect(0,0,W,H);
+    const muted=v('--muted'), ink=v('--ink'), surface=v('--surface');
+    const nb = weights(neighbours(focus)), [fx,fy] = P(N[focus]);
+    const near = new Set(nb.map(o=>o.j));
+    const p = reduce ? 1 : Math.min(1,(performance.now()-t0)/600);
+    // faint structure: every node to its 2 nearest
+    ctx.lineWidth=1; ctx.strokeStyle=muted; ctx.globalAlpha=.14;
+    N.forEach((n,i)=>neighbours(i).slice(0,2).forEach(o=>{
+      const [x1,y1]=P(n), [x2,y2]=P(N[o.j]); ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    }));
+    // attention edges: width and opacity follow the weight
+    nb.forEach(o=>{
+      const [x,y]=P(N[o.j]);
+      ctx.strokeStyle=col(N[focus].t); ctx.globalAlpha=.25+.75*Math.min(1,o.w*2.2); ctx.lineWidth=1+o.w*9;
+      ctx.beginPath(); ctx.moveTo(fx,fy); ctx.lineTo(fx+(x-fx)*p, fy+(y-fy)*p); ctx.stroke();
+      if(p===1){
+        const mx=(fx+x)/2, my=(fy+y)/2, s=o.w.toFixed(2);
+        ctx.globalAlpha=1; ctx.font='500 11px "IBM Plex Mono",monospace';
+        const tw=ctx.measureText(s).width;
+        ctx.fillStyle=surface; ctx.fillRect(mx-tw/2-3, my-8, tw+6, 15);
+        ctx.fillStyle=muted; ctx.textAlign='center'; ctx.fillText(s, mx, my+4);
+      }
+    });
+    // nodes and labels
+    N.forEach((n,i)=>{
+      const [x,y]=P(n), on=i===focus, nr=near.has(i);
+      ctx.globalAlpha = on||nr ? 1 : .45;
+      ctx.beginPath(); ctx.arc(x,y, on?9:(n.t==='p'?7:5.5), 0, 7); ctx.fillStyle=col(n.t); ctx.fill();
+      if(on){ ctx.lineWidth=2; ctx.strokeStyle=col(n.t); ctx.globalAlpha=.35; ctx.beginPath(); ctx.arc(x,y,16,0,7); ctx.stroke(); }
+      if(on||nr||n.t==='p'||i===hover){
+        ctx.globalAlpha = on||nr||i===hover ? 1 : .7;
+        ctx.font=(on?'600 13px ':'400 12px ')+'"IBM Plex Sans",sans-serif'; ctx.fillStyle=ink;
+        const left = x > W*.62; ctx.textAlign = left?'right':'left';
+        ctx.fillText(n.label, x+(left?-12:12), y+4);
+      }
+    });
+    ctx.globalAlpha=1;
+    if(p<1) requestAnimationFrame(draw);
+  }
+  function setFocus(i){
+    focus=i; t0=performance.now();
+    const top = weights(neighbours(i)).slice(0,2).map(o=>N[o.j].label).join(' and ');
+    cap.textContent = `${N[i].label} attends most to ${top}. Edge labels are attention weights over its 5 nearest neighbours.`;
+    draw();
+  }
+  function pick(e){
+    const r=cv.getBoundingClientRect(), mx=e.clientX-r.left, my=e.clientY-r.top;
+    let best=-1, bd=26;
+    N.forEach((n,i)=>{ const [x,y]=P(n), d=Math.hypot(x-mx,y-my); if(d<bd){bd=d; best=i;} });
+    return best;
+  }
+  let paused=false;
+  cv.addEventListener('pointermove', e=>{ const i=pick(e); if(i>=0 && i!==focus){ paused=true; setFocus(i); } });
+  cv.addEventListener('pointerleave', ()=>{ paused=false; });
+  cv.addEventListener('click', e=>{ const i=pick(e); if(i>=0){ paused=true; setFocus(i); } });
+  if(!reduce) setInterval(()=>{ if(!paused && !document.hidden) setFocus((focus+1)%N.length); }, 3200);
+  new ResizeObserver(size).observe(cv);
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', draw);
+  if(document.fonts) document.fonts.ready.then(draw);
+})();
+</script>
+</body>
+</html>
