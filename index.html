@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AI Collective Lab</title>
-<meta name="description" content="A small group building machine-learning projects together. Every project ships with its code, its numbers, and the cases where the model gets it wrong.">
+<title>AI Collective</title>
+<meta name="description" content="An independent research collective building machine-learning projects together. Every project ships with its code, its numbers, and the cases where the model gets it wrong.">
 <link rel="canonical" href="https://ai-collective-lab.github.io/">
 <meta name="theme-color" content="#f3f5fa" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#071122" media="(prefers-color-scheme: dark)">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://ai-collective-lab.github.io/">
-<meta property="og:title" content="AI Collective Lab">
+<meta property="og:title" content="AI Collective">
 <meta property="og:description" content="Machine-learning projects, built together and published in full: code, results and failure cases.">
 <meta property="og:image" content="https://ai-collective-lab.github.io/assets/og-image.png">
 <meta property="og:image:width" content="1200">
@@ -251,7 +251,7 @@ html.cursor-on, html.cursor-on *{cursor:none !important}
 }
 @media (prefers-reduced-motion:reduce){.wash{display:none}}
 
-/* lab bot: follows the cursor */
+/* site bot: follows the cursor */
 .bot{position:fixed; right:clamp(14px,2.5vw,32px); bottom:clamp(14px,2.5vw,28px); z-index:30; display:flex; align-items:flex-end; gap:10px; pointer-events:none}
 .bot-btn{pointer-events:auto; width:84px; height:96px; padding:0; border:0; background:none; cursor:pointer; filter:drop-shadow(0 10px 18px color-mix(in srgb,var(--violet) 30%,transparent))}
 .bot-btn svg{width:100%; height:100%; overflow:visible; display:block}
@@ -293,7 +293,7 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
 <div class="progress" aria-hidden="true"></div>
 <div class="bot" id="bot">
   <div class="bot-bubble" id="bot-bubble" role="status" aria-live="polite"></div>
-  <button class="bot-btn" id="bot-btn" type="button" aria-label="Lab bot: show a tip" aria-controls="bot-bubble">
+  <button class="bot-btn" id="bot-btn" type="button" aria-label="Site bot: show a tip" aria-controls="bot-bubble">
     <svg viewBox="0 0 120 138" aria-hidden="true">
       <defs>
         <linearGradient id="bot-rim" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4aa8ff"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient>
@@ -336,7 +336,7 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
 
 <header class="site-head">
   <div class="wrap">
-    <a class="brand" href="#top"><img src="assets/logo-320.png" alt="" width="30" height="30">AI Collective Lab</a>
+    <a class="brand" href="#top"><img src="assets/logo-320.png" alt="" width="30" height="30">AI Collective</a>
     <nav class="nav" aria-label="Main">
       <a href="#projects">projects</a>
       <a href="#research" class="opt">research</a>
@@ -353,9 +353,9 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
     <div class="wrap">
       <div>
         <span class="badge"><i></i>Open to collaborators</span>
-        <h1>AI <span class="grad">Collective</span> Lab</h1>
+        <h1>AI <span class="grad">Collective</span></h1>
         <p class="building"><b>Building</b> &nbsp;<span class="typed">brain tumour segmentation</span><span class="caret" aria-hidden="true"></span></p>
-        <p class="lede">A small group building <span class="term">machine-learning</span> projects together. Every project ships with <strong>its code, its numbers, and the cases where the model gets it wrong.</strong></p>
+        <p class="lede">An independent research collective building <span class="term">machine-learning</span> projects together. Every project ships with <strong>its code, its numbers, and the cases where the model gets it wrong.</strong></p>
         <div class="ctas">
           <a class="btn primary" href="#projects">See the projects</a>
           <a class="btn ghost" href="#join">Join a project</a>
@@ -364,7 +364,7 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
       <figure class="graph">
         <canvas id="attn" aria-hidden="true"></canvas>
         <figcaption>
-          <span id="attn-caption">The lab as a graph. Each node attends to its 5 nearest neighbours, as in LatentGAT's bottleneck. Hover or tap a node.</span>
+          <span id="attn-caption">The collective as a graph. Each node attends to its 5 nearest neighbours, as in LatentGAT's bottleneck. Hover or tap a node.</span>
           <span class="legend"><span style="--c:var(--blue)">project</span><span style="--c:#e0a526">industry</span><span style="--c:var(--violet)">method</span><span style="--c:#8a96b3">dataset</span><span style="--c:#1fae6b">member</span></span>
         </figcaption>
       </figure>
@@ -493,7 +493,7 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
             <div><dt>Features kept</dt><dd>25<small>of 2,420</small></dd></div>
           </dl>
           <ul class="tags"><li>NSGA-II</li><li>Harris Hawks optimisation</li><li>Radiomics</li><li>ANFIS</li><li>Figshare MRI</li></ul>
-          <div class="team">Lab authors
+          <div class="team">Members
             <a href="https://github.com/Muhammad-Azeem-Bhatti"><img src="https://github.com/Muhammad-Azeem-Bhatti.png?size=52" alt="" width="26" height="26" loading="lazy">@Muhammad-Azeem-Bhatti</a>
             <span class="sup">Supervised by <b>Dr. Umme Zahoora</b></span>
           </div>
@@ -510,7 +510,7 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
             <div><dt>Scans shared</dt><dd>None</dd></div>
           </dl>
           <ul class="tags"><li>Federated learning</li><li>Fed-PLM aggregation</li><li>Attention U-Net</li><li>BraTS2021</li></ul>
-          <div class="team">Lab authors
+          <div class="team">Members
             <a href="https://github.com/Sumer238"><img src="https://github.com/Sumer238.png?size=52" alt="" width="26" height="26" loading="lazy">@Sumer238</a>
             <a href="https://github.com/Muhammad-Azeem-Bhatti"><img src="https://github.com/Muhammad-Azeem-Bhatti.png?size=52" alt="" width="26" height="26" loading="lazy">@Muhammad-Azeem-Bhatti</a>
             <span class="sup">Supervised by <b>Dr. Umme Zahoora</b></span>
@@ -606,7 +606,7 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
 
 <footer>
   <div class="wrap">
-    <span>© 2026 AI Collective Lab</span>
+    <span>© 2026 AI Collective</span>
     <a href="https://github.com/AI-Collective-Lab/ai-collective-lab.github.io">Site source</a>
   </div>
 </footer>
@@ -618,7 +618,7 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
   const cap = document.getElementById('attn-caption');
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const K = 5, TAU = 0.11;
-  // Real entities from the lab; x/y are layout positions in 0..1.
+  // Real entities from the collective; x/y are layout positions in 0..1.
   const N = [
     ['LatentGAT','p',.50,.44],['Plant GAN','p',.22,.70],['HIGGS','p',.80,.74],
     ['3D U-Net','m',.33,.24],['Graph attention','m',.66,.20],['GAN','m',.10,.48],['CNN','m',.36,.86],
@@ -843,7 +843,7 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
 
   // Tips on click
   const tips = [
-    'Hi, I\'m the lab bot. I follow your cursor the same way a graph-attention node picks its neighbours.',
+    'Hi, I\'m the AI Collective bot. I follow your cursor the same way a graph-attention node picks its neighbours.',
     'Hover the graph at the top. Each line shows how much one node attends to another.',
     'Our flagship is <a href="#p-latentgat">LatentGAT</a>: brain tumour segmentation, Dice 0.869.',
     'Every project lists the cases where the model gets it wrong, not just the best scores.',
