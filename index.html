@@ -120,6 +120,15 @@ figure.fig figcaption{font:400 12.5px/1.5 var(--mono); color:var(--muted); margi
 figure.fig figcaption b{color:var(--ink); font-weight:500}
 
 /* people */
+.client-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr)); gap:16px}
+.work{display:flex; flex-direction:column; padding:22px; background:var(--surface); border:1px solid var(--line); border-radius:14px; min-width:0}
+.work .kicker{margin:0 0 10px}
+.work h3{font:700 20px/1.25 var(--display); margin:0 0 10px}
+.work p{margin:0 0 16px; color:var(--muted)}
+.work .tags{display:flex; flex-wrap:wrap; gap:6px; margin:auto 0 0; padding:0; list-style:none}
+.work .tags li{font:400 12px/1 var(--mono); padding:6px 9px; border-radius:6px; background:color-mix(in srgb,var(--violet) 10%,transparent)}
+.status{display:inline-flex; align-items:center; gap:6px; font:500 11px/1 var(--mono); letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin:0 0 14px}
+.status i{width:7px; height:7px; border-radius:50%; background:#e0a526}
 .people{display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr)); gap:16px}
 .person{display:flex; gap:16px; align-items:center; padding:18px; background:var(--surface); border:1px solid var(--line); border-radius:14px; text-decoration:none; min-width:0}
 .person:hover{border-color:var(--blue)}
@@ -310,6 +319,7 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
     <a class="brand" href="#top"><img src="assets/logo-320.png" alt="" width="30" height="30">AI Collective Lab</a>
     <nav class="nav" aria-label="Main">
       <a href="#projects">projects</a>
+      <a href="#clients" class="opt">clients</a>
       <a href="#people" class="opt">people</a>
       <a href="#join">join</a>
       <a href="https://github.com/AI-Collective-Lab">github</a>
@@ -441,6 +451,37 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
           <figcaption><b>Fig. 3</b> ROC curves on the HIGGS test split. Big numbers above are the neural network; LR is logistic regression.</figcaption>
         </figure>
       </article>
+    </div>
+  </section>
+
+  <section id="clients">
+    <div class="wrap">
+      <p class="eyebrow">Client work</p>
+      <h2>Built for Golden Gate Innovations</h2>
+      <p class="section-intro">Three projects we're building for our client <strong>Golden Gate Innovations</strong>. The code and data belong to the client, so here's what each one does rather than how it scores.</p>
+      <div class="client-grid">
+        <article class="work">
+          <p class="status"><i></i>In progress</p>
+          <p class="kicker">Computer vision · Utilities</p>
+          <h3>K-Electric meter reading</h3>
+          <p>Reads electricity meters from field photos. A detector finds the meter's display, the crop is straightened, and an OCR model reads the digits several times. Readings that all agree are accepted automatically; the rest go to a person to check.</p>
+          <ul class="tags"><li>YOLO (rotated boxes)</li><li>OCR</li><li>Test-time augmentation</li></ul>
+        </article>
+        <article class="work">
+          <p class="status"><i></i>In progress</p>
+          <p class="kicker">Speech recognition · NLP</p>
+          <h3>Urdu-English meeting transcription</h3>
+          <p>Transcribes meetings where people switch between Urdu and English mid-sentence, then writes a summary with action items. Progress streams live while it works, and the audio stays on the client's own infrastructure.</p>
+          <ul class="tags"><li>Whisper large-v3</li><li>Code-switching</li><li>FastAPI</li><li>LLM summaries</li></ul>
+        </article>
+        <article class="work">
+          <p class="status"><i></i>In progress</p>
+          <p class="kicker">NLP · Open-source intelligence</p>
+          <h3>OSINT news monitor</h3>
+          <p>Collects public news, Reddit threads and government press releases on a schedule. An LLM tags each item by topic and stance, and everything lands in a dashboard for analysts to review.</p>
+          <ul class="tags"><li>LLM classification</li><li>RSS</li><li>Streamlit</li></ul>
+        </article>
+      </div>
     </div>
   </section>
 
@@ -595,7 +636,7 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
   if (reduce || !('IntersectionObserver' in window)) return;
   // Scroll reveal. Classes are added from JS, so the page is fully visible without it.
   const groups = [
-    ...document.querySelectorAll('section .eyebrow, section h2, .section-intro, .plate, .people, .join .btn'),
+    ...document.querySelectorAll('section .eyebrow, section h2, .section-intro, .plate, .client-grid, .people, .join .btn'),
   ];
   groups.forEach(el => el.classList.add('reveal'));
   document.querySelectorAll('.steps li').forEach((el,i) => { el.classList.add('reveal'); el.style.transitionDelay = (i*0.12)+'s'; });
