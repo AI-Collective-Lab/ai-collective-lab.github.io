@@ -22,7 +22,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <script>document.documentElement.classList.add('js')</script>
-<script type="importmap">{"imports":{"three":"./assets/vendor/three.module.min.js","three/addons/":"./assets/vendor/","@pixiv/three-vrm":"./assets/vendor/three-vrm.module.min.js"}}</script>
 <style>
 :root{
   --paper:#f3f5fa; --surface:#ffffff; --ink:#0a1430; --muted:#46516e; --line:#d5dbe8;
@@ -249,13 +248,6 @@ html.cursor-on, html.cursor-on *{cursor:none !important}
   .bot{animation:rise .8s 1s cubic-bezier(.2,.7,.2,1) both}
 }
 
-/* 3D mascot (desktop): replaces the SVG bot once the model is ready */
-.mascot{display:none; pointer-events:auto; width:240px; height:370px; margin:0 -10px -28px 0; cursor:pointer; opacity:0; transition:opacity .9s ease;
-  -webkit-mask-image:linear-gradient(to top,transparent 0,#000 22%); mask-image:linear-gradient(to top,transparent 0,#000 22%)}
-.bot.is-3d .bot-btn{display:none}
-.bot.is-3d .mascot{display:block}
-.bot.is-3d.ready .mascot{opacity:1}
-.bot.is-3d .bot-bubble{margin-bottom:240px; margin-right:-34px}
 
 footer{border-top:1px solid var(--line); padding:28px 0 40px; font:400 13px/1.6 var(--mono); color:var(--muted)}
 footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10px}
@@ -532,7 +524,7 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
     ctx.clearRect(0,0,W,H);
     const muted=v('--muted'), ink=v('--ink'), surface=v('--surface');
     const nb = weights(neighbours(focus)), [fx,fy] = P(N[focus]);
-    const near = new Set(nb.map(o=>o.j));
+    const near = new Set(nb.map(o=>o.j)), top = new Set(nb.slice(0,2).map(o=>o.j)), compact = W < 560;
     const p = reduce ? 1 : Math.min(1,(performance.now()-t0)/600);
     // faint structure: every node to its 2 nearest
     ctx.lineWidth=1; ctx.strokeStyle=muted; ctx.globalAlpha=.14;
@@ -540,12 +532,13 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
       const [x1,y1]=P(n), [x2,y2]=P(N[o.j]); ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
     }));
     // attention edges: width and opacity follow the weight
-    nb.forEach(o=>{
+    nb.forEach((o,rank)=>{
       const [x,y]=P(N[o.j]);
       ctx.strokeStyle=col(N[focus].t); ctx.globalAlpha=.25+.75*Math.min(1,o.w*2.2); ctx.lineWidth=1+o.w*9;
       ctx.beginPath(); ctx.moveTo(fx,fy); ctx.lineTo(fx+(x-fx)*p, fy+(y-fy)*p); ctx.stroke();
-      if(p===1){
-        const mx=(fx+x)/2, my=(fy+y)/2, s=o.w.toFixed(2);
+      // weights: only the two strongest, only when there's room (small screens get them in the caption)
+      if(p===1 && !compact && rank<2){
+        const mx=fx+(x-fx)*.58, my=fy+(y-fy)*.58, s=o.w.toFixed(2);
         ctx.globalAlpha=1; ctx.font='500 11px "IBM Plex Mono",monospace';
         const tw=ctx.measureText(s).width;
         ctx.fillStyle=surface; ctx.fillRect(mx-tw/2-3, my-8, tw+6, 15);
@@ -560,8 +553,8 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
       if(on){ const ph=reduce?0:(performance.now()%1600)/1600; ctx.lineWidth=2; ctx.strokeStyle=col(n.t);
         ctx.globalAlpha=.45*(1-ph); ctx.beginPath(); ctx.arc(x,y,12+ph*16,0,7); ctx.stroke();
         ctx.globalAlpha=.35; ctx.beginPath(); ctx.arc(x,y,14,0,7); ctx.stroke(); }
-      if(on||nr||n.t==='p'||i===hover){
-        ctx.globalAlpha = on||nr||i===hover ? 1 : .7;
+      if(on||top.has(i)||i===hover||(!compact && (nr||n.t==='p'))){
+        ctx.globalAlpha = on||top.has(i)||i===hover ? 1 : .7;
         ctx.font=(on?'600 13px ':'400 12px ')+'"IBM Plex Sans",sans-serif'; ctx.fillStyle=ink;
         const left = x > W*.62; ctx.textAlign = left?'right':'left';
         ctx.fillText(n.label, x+(left?-12:12), y+4);
@@ -574,8 +567,8 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
   new IntersectionObserver(es=>{ const was=visible; visible=es[0].isIntersecting && !reduce; if(visible && !was) loop(); }).observe(cv);
   function setFocus(i){
     focus=i; t0=performance.now();
-    const top = weights(neighbours(i)).slice(0,2).map(o=>N[o.j].label).join(' and ');
-    cap.textContent = `${N[i].label} attends most to ${top}. Edge labels are attention weights over its 5 nearest neighbours.`;
+    const top = weights(neighbours(i)).slice(0,2).map(o=>`${N[o.j].label} at ${o.w.toFixed(2)}`).join(' and ');
+    cap.textContent = `${N[i].label} attends most to ${top}. Thicker lines mean more attention, over its 5 nearest neighbours.`;
     draw();
   }
   function pick(e){
@@ -735,7 +728,7 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
   let t = -1, hideT;
   btn.addEventListener('click', () => {
     t = (t + 1) % tips.length;
-    bubble.innerHTML = t === 0 && bot.classList.contains('is-3d') ? 'Hi, I’m Diana! I follow your cursor the same way a graph-attention node picks its neighbours.' : tips[t]; bubble.classList.add('show');
+    bubble.innerHTML = tips[t]; bubble.classList.add('show');
     clearTimeout(hideT); hideT = setTimeout(() => bubble.classList.remove('show'), 7000);
   });
   bubble.addEventListener('click', e => { if (e.target.closest('a')) bubble.classList.remove('show'); });
@@ -743,143 +736,6 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
   // Greet once, a moment after the page loads
   setTimeout(() => { if (t < 0) btn.click(); }, 4000);
 })();
-</script>
-<script type="module">
-// 3D mascot: desktop with a mouse only, loaded after the page is ready. Phones keep the SVG bot.
-const desktop = matchMedia('(min-width: 1280px) and (hover: hover) and (pointer: fine)').matches;
-const saveData = navigator.connection && navigator.connection.saveData;
-const bot = document.getElementById('bot'), btn = document.getElementById('bot-btn');
-function webgl(){ try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')); } catch { return false; } }
-
-async function start(){
-  const THREE = await import('three');
-  const { GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js');
-  const { VRMLoaderPlugin, VRMUtils } = await import('@pixiv/three-vrm');
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  const canvas = document.createElement('canvas');
-  canvas.className = 'mascot'; canvas.setAttribute('role', 'button'); canvas.setAttribute('aria-label', 'Diana, the lab mascot: show a tip'); canvas.tabIndex = 0;
-  const W = 240, H = 370;
-  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2)); renderer.setSize(W, H, false);
-  renderer.outputColorSpace = THREE.SRGBColorSpace;
-
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(22, W / H, 0.1, 20);
-  scene.add(new THREE.AmbientLight(0xffffff, 1.5));
-  const key = new THREE.DirectionalLight(0xffffff, 2.0); key.position.set(-0.6, 1.6, 2); scene.add(key);
-  const rim = new THREE.DirectionalLight(0x8b5cf6, 1.4); rim.position.set(1.5, 1.2, -1); scene.add(rim);
-
-  const loader = new GLTFLoader(); loader.register(parser => new VRMLoaderPlugin(parser));
-  const gltf = await loader.loadAsync('assets/mascot-shibu.vrm');
-  const vrm = gltf.userData.vrm;
-  VRMUtils.removeUnnecessaryVertices(gltf.scene);
-  if (VRMUtils.combineSkeletons) VRMUtils.combineSkeletons(gltf.scene);
-  VRMUtils.rotateVRM0(vrm);
-  vrm.scene.traverse(o => { o.frustumCulled = false; });
-  scene.add(vrm.scene);
-
-  const bone = n => vrm.humanoid.getNormalizedBoneNode(n);
-  const neck = bone('neck'), head = bone('head'), spine = bone('spine'), chest = bone('chest');
-  // Arm poses as [x, y, z] rotations per bone. Right arm raises with +z, left with -z; fingers curl +z (right) / -z (left).
-  const POSES = {
-    rest:    { rightUpperArm:[0,0.1,-1.2], leftUpperArm:[0,-0.1,1.2], rightLowerArm:[0,0.25,-0.15], leftLowerArm:[0,-0.25,0.15], rightHand:[0,0,0], leftHand:[0,0,0], curl:0.35 },
-    behind:  { rightUpperArm:[0,-0.7,-1.15], leftUpperArm:[0,0.7,1.15], rightLowerArm:[0,-1.3,0], leftLowerArm:[0,1.3,0], rightHand:[0,0,0], leftHand:[0,0,0], curl:0.3 },
-    explain: { rightUpperArm:[0,1.2,-1.05], leftUpperArm:[0,-1.2,1.05], rightLowerArm:[0,0,1.2], leftLowerArm:[0,0,-1.2], rightHand:[0,0,0], leftHand:[0,0,0], curl:0.12 },
-    wave:    { rightUpperArm:[0,0.95,-0.3], leftUpperArm:[0,-0.1,1.2], rightLowerArm:[0,0,1.9], leftLowerArm:[0,-0.25,0.15], rightHand:[0,0,0], leftHand:[0,0,0], curl:0 },
-  };
-  const ARM_BONES = ['rightUpperArm','leftUpperArm','rightLowerArm','leftLowerArm','rightHand','leftHand'];
-  const arm = Object.fromEntries(ARM_BONES.map(n => [n, bone(n)]));
-  const FINGERS = ['Index','Middle','Ring','Little'].flatMap(f => ['Proximal','Intermediate','Distal'].flatMap(p => ['right','left'].map(s => [s, bone(s + f + p)]))).filter(([, b]) => b);
-  const cur = JSON.parse(JSON.stringify(POSES.rest));
-  for (const n of ARM_BONES) arm[n] && arm[n].rotation.set(...cur[n]);
-  vrm.update(0);
-
-  // Pose scheduler: idle alternates rest/hands behind back; gestures interrupt for a while, then idle resumes.
-  let t = 0, smile = 0, gestureStart = 0, pose = 'rest', poseUntil = 5 + Math.random() * 3, gesture = null, gestureUntil = 0, lastWave = -99, clicks = 0;
-  function play(name, seconds){ gesture = name; gestureStart = t; gestureUntil = t + seconds; if (name === 'wave') lastWave = t; }
-  const headY = head.getWorldPosition(new THREE.Vector3()).y;
-  camera.position.set(0, headY - 0.05, 3.0); camera.lookAt(0, headY - 0.24, 0);
-
-  // Where to look: the pointer, mapped onto a plane in front of her
-  const target = new THREE.Object3D(); scene.add(target);
-  if (vrm.lookAt) vrm.lookAt.target = target;
-  let px = 0, py = 0, yaw = 0, pitch = 0;
-  addEventListener('pointermove', e => {
-    const r = canvas.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height * 0.22;
-    px = Math.max(-1, Math.min(1, (e.clientX - cx) / (innerWidth * 0.5)));
-    py = Math.max(-1, Math.min(1, (e.clientY - cy) / (innerHeight * 0.6)));
-  }, { passive: true });
-
-  // Expressions: blink and a smile on hover
-  const em = vrm.expressionManager;
-  const setExp = (n, v) => { if (em && em.getExpression(n)) em.setValue(n, v); };
-  let hover = 0, hoverTarget = 0, blinkT = 2 + Math.random() * 3, blink = 0;
-  canvas.addEventListener('pointerenter', () => { hoverTarget = 1; if (!reduce && t - lastWave > 8 && !gesture) play('wave', 2.4); });
-  canvas.addEventListener('pointerleave', () => hoverTarget = 0);
-  canvas.addEventListener('click', () => btn.click());
-  // Every tip she shows (greeting included): wave the first time, then explain with open palms
-  btn.addEventListener('click', () => { if (reduce) return; clicks++; play(clicks === 1 ? 'wave' : 'explain', clicks === 1 ? 2.6 : 3.2); });
-  canvas.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btn.click(); } });
-
-  bot.insertBefore(canvas, btn);
-  bot.classList.add('is-3d');
-
-  let last = performance.now(), first = true;
-  renderer.setAnimationLoop(() => {
-    if (document.hidden) return;
-    const now = performance.now(), dt = Math.min((now - last) / 1000, 0.05); last = now; t += dt;
-    yaw += (px * 0.9 - yaw) * 0.08; pitch += (py * 0.5 - pitch) * 0.08;
-    neck.rotation.y = yaw * 0.35; head.rotation.y = yaw * 0.45;
-    neck.rotation.x = pitch * 0.25; head.rotation.x = pitch * 0.35; head.rotation.z = smile * 0.08;
-    target.position.set(yaw * 1.6, headY - pitch * 0.9, 1.2);
-    if (!reduce) {
-      spine.rotation.x = Math.sin(t * 1.6) * 0.015;
-      chest.rotation.x = Math.sin(t * 1.6 + 0.6) * 0.012;
-      spine.rotation.z = Math.sin(t * 0.7) * 0.02;
-      // choose the active pose
-      if (gesture && t > gestureUntil) gesture = null;
-      if (!gesture && t > poseUntil) { pose = pose === 'rest' ? 'behind' : 'rest'; poseUntil = t + (pose === 'rest' ? 5 + Math.random() * 3 : 6 + Math.random() * 3); }
-      const goal = POSES[gesture || pose], k = 1 - Math.exp(-dt * 5);
-      for (const n of ARM_BONES) for (let i = 0; i < 3; i++) cur[n][i] += (goal[n][i] - cur[n][i]) * k;
-      cur.curl += (goal.curl - cur.curl) * k;
-      smile += ((gesture === 'wave' ? 1 : 0) - smile) * k;
-      // layered motion on top of the pose: breathing sway, elbow and wrist drift, the wave itself
-      const br = Math.sin(t * 1.6), sl = Math.sin(t * 0.9 + 1.3);
-      const waveAmt = gesture === 'wave' ? Math.max(0, Math.min(1, (t - gestureStart - 0.35) * 2.5, (gestureUntil - t) * 2.5)) : 0, wt = t - gestureStart;
-      for (const n of ARM_BONES) {
-        if (!arm[n]) continue;
-        const side = n.startsWith('right') ? 1 : -1, [x, y, z] = cur[n];
-        let ax = 0, ay = 0, az = 0;
-        if (n.endsWith('UpperArm')) { az = -side * br * 0.035; ay = side * sl * 0.04; }
-        if (n.endsWith('LowerArm')) { ay = side * Math.sin(t * 1.1 + side) * 0.06; }
-        if (n.endsWith('Hand'))     { ax = Math.sin(t * 1.3 + side) * 0.12; az = side * Math.sin(t * 0.8 + 2) * 0.1; }
-        // wave: forearm swings side to side from the elbow, the hand follows a beat later
-        if (n === 'rightLowerArm') ax += waveAmt * (Math.sin(wt * 9) * 0.22 - 0.06);
-        if (n === 'rightHand')     ax += waveAmt * Math.sin(wt * 9 - 0.7) * 0.28;
-        arm[n].rotation.set(x + ax, y + ay, z + az);
-      }
-      for (const [s, b] of FINGERS) {
-        const c = Math.max(0, cur.curl + Math.sin(t * 0.9 + (s === 'right' ? 0 : 1.7)) * 0.12);
-        b.rotation.set(0, 0, (s === 'right' ? 1 : -1) * c);
-      }
-      blinkT -= dt;
-      if (blinkT < 0) { blink = 1; blinkT = 2.5 + Math.random() * 3.5; }
-      blink = Math.max(0, blink - dt * 7);
-    }
-    hover += (hoverTarget - hover) * 0.12;
-    setExp('blink', blink > 0 ? Math.sin(blink * Math.PI) : 0);
-    setExp('happy', Math.max(hover * 0.8, smile * 0.7));
-    vrm.update(dt);
-    renderer.render(scene, camera);
-    if (first) { first = false; requestAnimationFrame(() => bot.classList.add('ready')); if (!reduce) setTimeout(() => play('wave', 2.8), 500); }
-  });
-}
-
-if (desktop && !saveData && webgl()) {
-  const go = () => setTimeout(() => start().catch(err => { console.warn('Mascot unavailable, keeping the bot:', err); bot.classList.remove('is-3d', 'ready'); }), 600);
-  if (document.readyState === 'complete') go(); else addEventListener('load', go, { once: true });
-}
 </script>
 </body>
 </html>
