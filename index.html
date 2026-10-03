@@ -502,7 +502,7 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
           <p class="status review"><i></i>Submitted · Frontiers</p>
           <p class="kicker">Federated learning · Medical imaging · Segmentation</p>
           <h3>A Privacy-Preserving Federated Learning Framework with Variance-Based Aggregation and Customized U-Net for Brain Tumor Segmentation</h3>
-          <p class="authors">Sumer Iqbal, Khadija Tul Kubra, <a href="#people"><b>Muhammad Azeem Bhatti</b></a>, Farquleet Farhat Gondal, Saddam Hussain Khan, Umme Zahoora</p>
+          <p class="authors"><a href="#people"><b>Sumer Iqbal</b></a>, Khadija Tul Kubra, <a href="#people"><b>Muhammad Azeem Bhatti</b></a>, Farquleet Farhat Gondal, Saddam Hussain Khan, Umme Zahoora</p>
           <p class="summary">Hospitals can't pool patient MRIs, so tumour-segmentation models usually learn from one site's data. This framework trains a lightweight attention U-Net across institutions without moving any scans: each site trains locally, and a new aggregation method, Fed-PLM, merges the updates along their direction of greatest variation. On BraTS 2021 the federated model comes within 0.01 Dice of a model trained on all the data in one place.</p>
           <dl class="metrics">
             <div><dt>Whole-tumour Dice</dt><dd>0.885<small>federated</small></dd></div>
@@ -511,6 +511,7 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
           </dl>
           <ul class="tags"><li>Federated learning</li><li>Fed-PLM aggregation</li><li>Attention U-Net</li><li>BraTS2021</li></ul>
           <div class="team">Lab authors
+            <a href="https://github.com/Sumer238"><img src="https://github.com/Sumer238.png?size=52" alt="" width="26" height="26" loading="lazy">@Sumer238</a>
             <a href="https://github.com/Muhammad-Azeem-Bhatti"><img src="https://github.com/Muhammad-Azeem-Bhatti.png?size=52" alt="" width="26" height="26" loading="lazy">@Muhammad-Azeem-Bhatti</a>
             <span class="sup">Supervised by <b>Dr. Umme Zahoora</b></span>
           </div>
@@ -578,6 +579,10 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
           <img src="https://github.com/zainulaabaidin.png?size=112" alt="" width="56" height="56" loading="lazy">
           <span><span class="h">Zain Ul Aabaidin</span><br><span class="r">Plant disease GAN · HIGGS</span></span>
         </a>
+        <a class="person" href="https://github.com/Sumer238">
+          <img src="https://github.com/Sumer238.png?size=112" alt="" width="56" height="56" loading="lazy">
+          <span><span class="h">Sumer Iqbal</span><br><span class="r">Research · federated brain tumour segmentation (first author)</span></span>
+        </a>
       </div>
     </div>
   </section>
@@ -620,7 +625,7 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
     ['MLP','m',.94,.52],['Logistic regression','m',.64,.92],['TTA','m',.58,.62],['K-fold','m',.08,.88],
     ['BraTS2021','d',.47,.08],['UCSF-PDGM','d',.84,.36],['BraTS-Africa','d',.18,.28],['Plant disease (38)','d',.30,.55],['HIGGS 11M','d',.92,.92],
     ['K-Electric','c',.47,.74],['Urdu-English ASR','c',.97,.08],['OSINT monitor','c',.74,.40],['LLM','m',.86,.20],
-    ['M. Azeem Bhatti','u',.76,.58],['@munahilamin03','u',.22,.97],['@zainulaabaidin','u',.05,.60]
+    ['M. Azeem Bhatti','u',.76,.58],['@munahilamin03','u',.22,.97],['@zainulaabaidin','u',.05,.60],['Sumer Iqbal','u',.30,.09]
   ].map(([label,t,x,y]) => ({label,t,x,y}));
   const css = () => getComputedStyle(document.documentElement);
   const v = name => css().getPropertyValue(name).trim();
