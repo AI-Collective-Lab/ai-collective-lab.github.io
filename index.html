@@ -779,9 +779,23 @@ async function start(){
 
   const bone = n => vrm.humanoid.getNormalizedBoneNode(n);
   const neck = bone('neck'), head = bone('head'), spine = bone('spine'), chest = bone('chest');
-  const lua = bone('leftUpperArm'), rua = bone('rightUpperArm'), lla = bone('leftLowerArm'), rla = bone('rightLowerArm');
-  lua.rotation.z = 1.2; rua.rotation.z = -1.2; lla.rotation.z = 0.15; rla.rotation.z = -0.15;
+  // Arm poses as [x, y, z] rotations per bone. Right arm raises with +z, left with -z; fingers curl +z (right) / -z (left).
+  const POSES = {
+    rest:    { rightUpperArm:[0,0.1,-1.2], leftUpperArm:[0,-0.1,1.2], rightLowerArm:[0,0.25,-0.15], leftLowerArm:[0,-0.25,0.15], rightHand:[0,0,0], leftHand:[0,0,0], curl:0.35 },
+    clasp:   { rightUpperArm:[0,0.6,-1.05], leftUpperArm:[0,-0.6,1.05], rightLowerArm:[0,1.3,0], leftLowerArm:[0,-1.3,0], rightHand:[0,0,0], leftHand:[0,0,0], curl:0.55 },
+    explain: { rightUpperArm:[0,0.4,-1.15], leftUpperArm:[0,-0.4,1.15], rightLowerArm:[0,1.6,0.2], leftLowerArm:[0,-1.6,-0.2], rightHand:[0,0,0], leftHand:[0,0,0], curl:0.1 },
+    wave:    { rightUpperArm:[0,0.7,-0.75], leftUpperArm:[0,-0.1,1.2], rightLowerArm:[0,0.3,2.2], leftLowerArm:[0,-0.25,0.15], rightHand:[0,0,0.3], leftHand:[0,0,0], curl:0.05 },
+  };
+  const ARM_BONES = ['rightUpperArm','leftUpperArm','rightLowerArm','leftLowerArm','rightHand','leftHand'];
+  const arm = Object.fromEntries(ARM_BONES.map(n => [n, bone(n)]));
+  const FINGERS = ['Index','Middle','Ring','Little'].flatMap(f => ['Proximal','Intermediate','Distal'].flatMap(p => ['right','left'].map(s => [s, bone(s + f + p)]))).filter(([, b]) => b);
+  const cur = JSON.parse(JSON.stringify(POSES.rest));
+  for (const n of ARM_BONES) arm[n] && arm[n].rotation.set(...cur[n]);
   vrm.update(0);
+
+  // Pose scheduler: idle alternates rest/clasp; gestures interrupt for a while, then idle resumes.
+  let t = 0, pose = 'rest', poseUntil = 5 + Math.random() * 3, gesture = null, gestureUntil = 0, lastWave = -99, clicks = 0;
+  function play(name, seconds){ gesture = name; gestureUntil = t + seconds; if (name === 'wave') lastWave = t; }
   const headY = head.getWorldPosition(new THREE.Vector3()).y;
   camera.position.set(0, headY - 0.06, 2.15); camera.lookAt(0, headY - 0.2, 0);
 
@@ -799,15 +813,17 @@ async function start(){
   const em = vrm.expressionManager;
   const setExp = (n, v) => { if (em && em.getExpression(n)) em.setValue(n, v); };
   let hover = 0, hoverTarget = 0, blinkT = 2 + Math.random() * 3, blink = 0;
-  canvas.addEventListener('pointerenter', () => hoverTarget = 1);
+  canvas.addEventListener('pointerenter', () => { hoverTarget = 1; if (!reduce && t - lastWave > 8 && !gesture) play('wave', 2.4); });
   canvas.addEventListener('pointerleave', () => hoverTarget = 0);
   canvas.addEventListener('click', () => btn.click());
+  // Every tip she shows (greeting included): wave the first time, then explain with open palms
+  btn.addEventListener('click', () => { if (reduce) return; clicks++; play(clicks === 1 ? 'wave' : 'explain', clicks === 1 ? 2.6 : 3.2); });
   canvas.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btn.click(); } });
 
   bot.insertBefore(canvas, btn);
   bot.classList.add('is-3d');
 
-  let last = performance.now(), t = 0, first = true;
+  let last = performance.now(), first = true;
   renderer.setAnimationLoop(() => {
     if (document.hidden) return;
     const now = performance.now(), dt = Math.min((now - last) / 1000, 0.05); last = now; t += dt;
@@ -819,7 +835,30 @@ async function start(){
       spine.rotation.x = Math.sin(t * 1.6) * 0.015;
       chest.rotation.x = Math.sin(t * 1.6 + 0.6) * 0.012;
       spine.rotation.z = Math.sin(t * 0.7) * 0.02;
-      lua.rotation.z = 1.2 + Math.sin(t * 1.6) * 0.02; rua.rotation.z = -1.2 - Math.sin(t * 1.6) * 0.02;
+      // choose the active pose
+      if (gesture && t > gestureUntil) gesture = null;
+      if (!gesture && t > poseUntil) { pose = pose === 'rest' ? 'clasp' : 'rest'; poseUntil = t + (pose === 'rest' ? 5 + Math.random() * 3 : 6 + Math.random() * 3); }
+      const goal = POSES[gesture || pose], k = 1 - Math.exp(-dt * 5);
+      for (const n of ARM_BONES) for (let i = 0; i < 3; i++) cur[n][i] += (goal[n][i] - cur[n][i]) * k;
+      cur.curl += (goal.curl - cur.curl) * k;
+      // layered motion on top of the pose: breathing sway, elbow and wrist drift, the wave itself
+      const br = Math.sin(t * 1.6), sl = Math.sin(t * 0.9 + 1.3);
+      const waveAmt = gesture === 'wave' ? Math.min(1, (t - (gestureUntil - 2.6)) * 3) : 0;
+      for (const n of ARM_BONES) {
+        if (!arm[n]) continue;
+        const side = n.startsWith('right') ? 1 : -1, [x, y, z] = cur[n];
+        let ax = 0, ay = 0, az = 0;
+        if (n.endsWith('UpperArm')) { az = -side * br * 0.035; ay = side * sl * 0.04; }
+        if (n.endsWith('LowerArm')) { ay = side * Math.sin(t * 1.1 + side) * 0.06; }
+        if (n.endsWith('Hand'))     { ax = Math.sin(t * 1.3 + side) * 0.12; az = side * Math.sin(t * 0.8 + 2) * 0.1; }
+        if (n === 'rightLowerArm') az += waveAmt * Math.sin(t * 11) * 0.32;
+        if (n === 'rightHand')     az += waveAmt * Math.sin(t * 11 + 0.8) * 0.35;
+        arm[n].rotation.set(x + ax, y + ay, z + az);
+      }
+      for (const [s, b] of FINGERS) {
+        const c = Math.max(0, cur.curl + Math.sin(t * 0.9 + (s === 'right' ? 0 : 1.7)) * 0.12);
+        b.rotation.set(0, 0, (s === 'right' ? 1 : -1) * c);
+      }
       blinkT -= dt;
       if (blinkT < 0) { blink = 1; blinkT = 2.5 + Math.random() * 3.5; }
       blink = Math.max(0, blink - dt * 7);
