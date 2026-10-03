@@ -103,7 +103,7 @@ h3{font:750 clamp(26px,3.4vw,36px)/1.05 var(--display); font-stretch:110%; lette
 .metrics dd{margin:4px 0 0; font:700 22px/1.1 var(--display); font-stretch:105%; font-variant-numeric:tabular-nums}
 .metrics dd small{font:400 12px var(--mono); color:var(--muted); margin-left:2px}
 .metrics.two{--cols:2}
-@media (max-width:420px){.metrics:not(.vs){--cols:2}}
+@media (max-width:420px){.metrics:not(.vs){--cols:2} .metrics:not(.vs) div:last-child:nth-child(odd){grid-column:1/-1}}
 .metrics.vs dd{font-size:18px}
 .metrics.vs dd small{display:block; margin:3px 0 0}
 .plate .tags{display:flex; flex-wrap:wrap; gap:6px; margin:0 0 20px; padding:0; list-style:none}
@@ -120,6 +120,19 @@ figure.fig figcaption{font:400 12.5px/1.5 var(--mono); color:var(--muted); margi
 figure.fig figcaption b{color:var(--ink); font-weight:500}
 
 /* people */
+.papers{display:grid; gap:20px}
+.paper{padding:clamp(20px,3.5vw,36px); background:var(--surface); border:1px solid var(--line); border-radius:18px; min-width:0}
+.paper h3{font:700 clamp(20px,2.4vw,26px)/1.25 var(--display); margin:0 0 12px; max-width:40em}
+.paper .authors{font:400 13px/1.6 var(--mono); color:var(--muted); margin:0 0 16px}
+.paper .authors b{color:var(--ink); font-weight:600}
+.paper > p{max-width:62em}
+.paper .summary{margin:0 0 20px}
+.paper .metrics{max-width:640px}
+.paper .tags{display:flex; flex-wrap:wrap; gap:6px; margin:0; padding:0; list-style:none}
+.paper .tags li{font:400 12px/1 var(--mono); padding:6px 9px; border-radius:6px; background:color-mix(in srgb,var(--blue) 9%,transparent)}
+.status.review i{background:var(--blue)}
+.client-logo{display:inline-flex; background:#fff; padding:10px 16px; border-radius:12px; margin:0 0 18px; border:1px solid var(--line)}
+.client-logo img{display:block; height:44px; width:auto}
 .client-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr)); gap:16px}
 .work{display:flex; flex-direction:column; padding:22px; background:var(--surface); border:1px solid var(--line); border-radius:14px; min-width:0}
 .work .kicker{margin:0 0 10px}
@@ -320,6 +333,7 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
     <a class="brand" href="#top"><img src="assets/logo-320.png" alt="" width="30" height="30">AI Collective Lab</a>
     <nav class="nav" aria-label="Main">
       <a href="#projects">projects</a>
+      <a href="#research" class="opt">research</a>
       <a href="#clients" class="opt">clients</a>
       <a href="#people" class="opt">people</a>
       <a href="#join">join</a>
@@ -345,7 +359,7 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
         <canvas id="attn" aria-hidden="true"></canvas>
         <figcaption>
           <span id="attn-caption">The lab as a graph. Each node attends to its 5 nearest neighbours, as in LatentGAT's bottleneck. Hover or tap a node.</span>
-          <span class="legend"><span style="--c:var(--blue)">project</span><span style="--c:var(--violet)">method</span><span style="--c:#8a96b3">dataset</span><span style="--c:#1fae6b">member</span></span>
+          <span class="legend"><span style="--c:var(--blue)">project</span><span style="--c:#e0a526">client</span><span style="--c:var(--violet)">method</span><span style="--c:#8a96b3">dataset</span><span style="--c:#1fae6b">member</span></span>
         </figcaption>
       </figure>
     </div>
@@ -455,10 +469,47 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
     </div>
   </section>
 
+  <section id="research">
+    <div class="wrap">
+      <p class="eyebrow">Ongoing research</p>
+      <h2>Papers under submission</h2>
+      <p class="section-intro">Two manuscripts currently submitted to journals. Results are from the submitted versions and may change in review.</p>
+      <div class="papers">
+        <article class="paper">
+          <p class="status review"><i></i>Submitted · Information Fusion (Elsevier) · Aug 2026</p>
+          <p class="kicker">Explainable AI · Medical imaging · Feature selection</p>
+          <h3>Multi-Objective Selection of Hybrid Deep–Radiomic Features for Brain Tumor MRI Classification with Transparent Fuzzy Rule-Based Inference</h3>
+          <p class="authors"><b>Muhammad Azeem Bhatti</b>, Khadija Tul Kubra, Umme Zahoora, Tanja Pavleska, Asifullah Khan</p>
+          <p class="summary">Combining deep CNN features with handcrafted radiomic features gives a brain-tumour classifier plenty to work with, but also thousands of redundant inputs and a decision nobody can audit. This paper narrows a pool of 2,420 hybrid features down to 25 with a new three-objective search (an opposition-based Harris Hawks extension of NSGA-II) that balances F1-score, feature count and redundancy. The chosen features feed a neuro-fuzzy classifier (ANFIS), whose if–then rules show clinicians exactly why each MRI scan was classified the way it was.</p>
+          <dl class="metrics">
+            <div><dt>Accuracy (CV)</dt><dd>94.45%</dd></div>
+            <div><dt>Macro F1</dt><dd>0.938</dd></div>
+            <div><dt>Features kept</dt><dd>25<small>of 2,420</small></dd></div>
+          </dl>
+          <ul class="tags"><li>NSGA-II</li><li>Harris Hawks optimisation</li><li>Radiomics</li><li>ANFIS</li><li>Figshare MRI</li></ul>
+        </article>
+        <article class="paper">
+          <p class="status review"><i></i>Submitted · Frontiers</p>
+          <p class="kicker">Federated learning · Medical imaging · Segmentation</p>
+          <h3>A Privacy-Preserving Federated Learning Framework with Variance-Based Aggregation and Customized U-Net for Brain Tumor Segmentation</h3>
+          <p class="authors">Sumer Iqbal, Khadija Tul Kubra, <b>Muhammad Azeem Bhatti</b>, Farquleet Farhat Gondal, Saddam Hussain Khan, Umme Zahoora</p>
+          <p class="summary">Hospitals can't pool patient MRIs, so tumour-segmentation models usually learn from one site's data. This framework trains a lightweight attention U-Net across institutions without moving any scans: each site trains locally, and a new aggregation method, Fed-PLM, merges the updates along their direction of greatest variation. On BraTS 2021 the federated model comes within 0.01 Dice of a model trained on all the data in one place.</p>
+          <dl class="metrics">
+            <div><dt>Whole-tumour Dice</dt><dd>0.885<small>federated</small></dd></div>
+            <div><dt>Centralised bound</dt><dd>0.894</dd></div>
+            <div><dt>Scans shared</dt><dd>None</dd></div>
+          </dl>
+          <ul class="tags"><li>Federated learning</li><li>Fed-PLM aggregation</li><li>Attention U-Net</li><li>BraTS2021</li></ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
   <section id="clients">
     <div class="wrap">
       <p class="eyebrow">Client work</p>
       <h2>Built for Golden Gate Innovations</h2>
+      <div class="client-logo"><img src="assets/ggi-logo.png" width="158" height="44" alt="Golden Gate Innovations"></div>
       <p class="section-intro">Three projects for our client <strong>Golden Gate Innovations</strong>: two delivered, one in progress. The code and data belong to the client, so here's what each one does rather than how it scores.</p>
       <div class="client-grid">
         <article class="work">
@@ -554,11 +605,12 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
     ['3D U-Net','m',.33,.24],['Graph attention','m',.66,.20],['GAN','m',.10,.48],['CNN','m',.36,.86],
     ['MLP','m',.94,.52],['Logistic regression','m',.64,.92],['TTA','m',.58,.62],['K-fold','m',.08,.88],
     ['BraTS2021','d',.47,.08],['UCSF-PDGM','d',.84,.36],['BraTS-Africa','d',.18,.28],['Plant disease (38)','d',.30,.55],['HIGGS 11M','d',.92,.92],
+    ['K-Electric','c',.47,.74],['Urdu-English ASR','c',.97,.08],['OSINT monitor','c',.74,.40],['LLM','m',.86,.20],
     ['M. Azeem Bhatti','u',.76,.58],['@munahilamin03','u',.22,.97],['@zainulaabaidin','u',.05,.60]
   ].map(([label,t,x,y]) => ({label,t,x,y}));
   const css = () => getComputedStyle(document.documentElement);
   const v = name => css().getPropertyValue(name).trim();
-  const col = t => ({p:v('--blue'), m:v('--violet'), d:'#8a96b3', u:'#1fae6b'})[t];
+  const col = t => ({p:v('--blue'), m:v('--violet'), d:'#8a96b3', u:'#1fae6b', c:'#e0a526'})[t];
   let W=0, H=0, focus=0, t0=performance.now(), hover=-1;
 
   function size(){
@@ -602,11 +654,11 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
     N.forEach((n,i)=>{
       const [x,y]=P(n), on=i===focus, nr=near.has(i);
       ctx.globalAlpha = on||nr ? 1 : .45;
-      ctx.beginPath(); ctx.arc(x,y, on?9:(n.t==='p'?7:5.5), 0, 7); ctx.fillStyle=col(n.t); ctx.fill();
+      ctx.beginPath(); ctx.arc(x,y, on?9:(n.t==='p'||n.t==='c'?7:5.5), 0, 7); ctx.fillStyle=col(n.t); ctx.fill();
       if(on){ const ph=reduce?0:(performance.now()%1600)/1600; ctx.lineWidth=2; ctx.strokeStyle=col(n.t);
         ctx.globalAlpha=.45*(1-ph); ctx.beginPath(); ctx.arc(x,y,12+ph*16,0,7); ctx.stroke();
         ctx.globalAlpha=.35; ctx.beginPath(); ctx.arc(x,y,14,0,7); ctx.stroke(); }
-      if(on||top.has(i)||i===hover||(!compact && (nr||n.t==='p'))){
+      if(on||top.has(i)||i===hover||(!compact && (nr||n.t==='p'||n.t==='c'))){
         ctx.globalAlpha = on||top.has(i)||i===hover ? 1 : .7;
         ctx.font=(on?'600 13px ':'400 12px ')+'"IBM Plex Sans",sans-serif'; ctx.fillStyle=ink;
         const left = x > W*.62; ctx.textAlign = left?'right':'left';
@@ -646,7 +698,7 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
   if (reduce || !('IntersectionObserver' in window)) return;
   // Scroll reveal. Classes are added from JS, so the page is fully visible without it.
   const groups = [
-    ...document.querySelectorAll('section .eyebrow, section h2, .section-intro, .plate, .client-grid, .people, .join .btn'),
+    ...document.querySelectorAll('section .eyebrow, section h2, .section-intro, .plate, .paper, .client-grid, .people, .join .btn'),
   ];
   groups.forEach(el => el.classList.add('reveal'));
   document.querySelectorAll('.steps li').forEach((el,i) => { el.classList.add('reveal'); el.style.transitionDelay = (i*0.12)+'s'; });
