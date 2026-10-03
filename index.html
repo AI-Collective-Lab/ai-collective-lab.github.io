@@ -61,7 +61,8 @@ a{color:inherit}
 @media (max-width:880px){.hero .wrap{grid-template-columns:minmax(0,1fr)}}
 .badge{display:inline-flex; align-items:center; gap:8px; font:500 12px/1 var(--mono); letter-spacing:.06em; text-transform:uppercase; color:var(--muted); border:1px solid var(--line); border-radius:99px; padding:7px 12px; background:var(--surface)}
 .badge i{width:7px; height:7px; border-radius:50%; background:#1fae6b; box-shadow:0 0 0 3px color-mix(in srgb,#1fae6b 25%,transparent)}
-h1{font:800 clamp(44px,8.2vw,92px)/.92 var(--display); font-stretch:125%; letter-spacing:-.035em; margin:22px 0 22px}
+h1{font:800 clamp(44px,11vw,92px)/.92 var(--display); font-stretch:125%; letter-spacing:-.035em; margin:22px 0 22px}
+@media (min-width:881px){h1{font-size:clamp(44px,6.2vw,92px)}}
 h1 .grad{background:linear-gradient(90deg,var(--blue),var(--violet)); -webkit-background-clip:text; background-clip:text; color:transparent}
 .lede{font-size:clamp(18px,2vw,20px); color:var(--muted); max-width:34em; margin:0 0 30px}
 .lede strong{color:var(--ink); font-weight:600}
@@ -249,12 +250,12 @@ html.cursor-on, html.cursor-on *{cursor:none !important}
 }
 
 /* 3D mascot (desktop): replaces the SVG bot once the model is ready */
-.mascot{display:none; pointer-events:auto; width:230px; height:330px; margin:0 -10px -28px 0; cursor:pointer; opacity:0; transition:opacity .9s ease;
+.mascot{display:none; pointer-events:auto; width:240px; height:370px; margin:0 -10px -28px 0; cursor:pointer; opacity:0; transition:opacity .9s ease;
   -webkit-mask-image:linear-gradient(to top,transparent 0,#000 22%); mask-image:linear-gradient(to top,transparent 0,#000 22%)}
 .bot.is-3d .bot-btn{display:none}
 .bot.is-3d .mascot{display:block}
 .bot.is-3d.ready .mascot{opacity:1}
-.bot.is-3d .bot-bubble{margin-bottom:210px; margin-right:-34px}
+.bot.is-3d .bot-bubble{margin-bottom:240px; margin-right:-34px}
 
 footer{border-top:1px solid var(--line); padding:28px 0 40px; font:400 13px/1.6 var(--mono); color:var(--muted)}
 footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10px}
@@ -757,7 +758,7 @@ async function start(){
 
   const canvas = document.createElement('canvas');
   canvas.className = 'mascot'; canvas.setAttribute('role', 'button'); canvas.setAttribute('aria-label', 'Lab mascot: show a tip'); canvas.tabIndex = 0;
-  const W = 230, H = 330;
+  const W = 240, H = 370;
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2)); renderer.setSize(W, H, false);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -794,10 +795,10 @@ async function start(){
   vrm.update(0);
 
   // Pose scheduler: idle alternates rest/clasp; gestures interrupt for a while, then idle resumes.
-  let t = 0, pose = 'rest', poseUntil = 5 + Math.random() * 3, gesture = null, gestureUntil = 0, lastWave = -99, clicks = 0;
-  function play(name, seconds){ gesture = name; gestureUntil = t + seconds; if (name === 'wave') lastWave = t; }
+  let t = 0, gestureStart = 0, pose = 'rest', poseUntil = 5 + Math.random() * 3, gesture = null, gestureUntil = 0, lastWave = -99, clicks = 0;
+  function play(name, seconds){ gesture = name; gestureStart = t; gestureUntil = t + seconds; if (name === 'wave') lastWave = t; }
   const headY = head.getWorldPosition(new THREE.Vector3()).y;
-  camera.position.set(0, headY - 0.06, 2.15); camera.lookAt(0, headY - 0.2, 0);
+  camera.position.set(0, headY - 0.02, 2.45); camera.lookAt(0, headY - 0.16, 0);
 
   // Where to look: the pointer, mapped onto a plane in front of her
   const target = new THREE.Object3D(); scene.add(target);
@@ -843,7 +844,7 @@ async function start(){
       cur.curl += (goal.curl - cur.curl) * k;
       // layered motion on top of the pose: breathing sway, elbow and wrist drift, the wave itself
       const br = Math.sin(t * 1.6), sl = Math.sin(t * 0.9 + 1.3);
-      const waveAmt = gesture === 'wave' ? Math.min(1, (t - (gestureUntil - 2.6)) * 3) : 0;
+      const waveAmt = gesture === 'wave' ? Math.min(1, (t - gestureStart) * 3, (gestureUntil - t) * 3) : 0;
       for (const n of ARM_BONES) {
         if (!arm[n]) continue;
         const side = n.startsWith('right') ? 1 : -1, [x, y, z] = cur[n];
@@ -868,7 +869,7 @@ async function start(){
     setExp('happy', hover * 0.8);
     vrm.update(dt);
     renderer.render(scene, camera);
-    if (first) { first = false; requestAnimationFrame(() => bot.classList.add('ready')); }
+    if (first) { first = false; requestAnimationFrame(() => bot.classList.add('ready')); if (!reduce) setTimeout(() => play('wave', 2.8), 500); }
   });
 }
 
