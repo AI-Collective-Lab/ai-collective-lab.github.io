@@ -734,7 +734,8 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
   ];
   let t = -1, hideT;
   btn.addEventListener('click', () => {
-    t = (t + 1) % tips.length; bubble.innerHTML = tips[t]; bubble.classList.add('show');
+    t = (t + 1) % tips.length;
+    bubble.innerHTML = t === 0 && bot.classList.contains('is-3d') ? 'Hi, I’m Diana! I follow your cursor the same way a graph-attention node picks its neighbours.' : tips[t]; bubble.classList.add('show');
     clearTimeout(hideT); hideT = setTimeout(() => bubble.classList.remove('show'), 7000);
   });
   bubble.addEventListener('click', e => { if (e.target.closest('a')) bubble.classList.remove('show'); });
@@ -757,7 +758,7 @@ async function start(){
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const canvas = document.createElement('canvas');
-  canvas.className = 'mascot'; canvas.setAttribute('role', 'button'); canvas.setAttribute('aria-label', 'Lab mascot: show a tip'); canvas.tabIndex = 0;
+  canvas.className = 'mascot'; canvas.setAttribute('role', 'button'); canvas.setAttribute('aria-label', 'Diana, the lab mascot: show a tip'); canvas.tabIndex = 0;
   const W = 240, H = 370;
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2)); renderer.setSize(W, H, false);
@@ -784,7 +785,7 @@ async function start(){
   const POSES = {
     rest:    { rightUpperArm:[0,0.1,-1.2], leftUpperArm:[0,-0.1,1.2], rightLowerArm:[0,0.25,-0.15], leftLowerArm:[0,-0.25,0.15], rightHand:[0,0,0], leftHand:[0,0,0], curl:0.35 },
     clasp:   { rightUpperArm:[0,0.6,-1.05], leftUpperArm:[0,-0.6,1.05], rightLowerArm:[0,1.3,0], leftLowerArm:[0,-1.3,0], rightHand:[0,0,0], leftHand:[0,0,0], curl:0.55 },
-    explain: { rightUpperArm:[0,0.4,-1.15], leftUpperArm:[0,-0.4,1.15], rightLowerArm:[0,1.6,0.2], leftLowerArm:[0,-1.6,-0.2], rightHand:[0,0,0], leftHand:[0,0,0], curl:0.1 },
+    explain: { rightUpperArm:[0,1.2,-1.05], leftUpperArm:[0,-1.2,1.05], rightLowerArm:[0,0,1.2], leftLowerArm:[0,0,-1.2], rightHand:[0,0,0], leftHand:[0,0,0], curl:0.12 },
     wave:    { rightUpperArm:[0,0.95,-0.3], leftUpperArm:[0,-0.1,1.2], rightLowerArm:[0,0,1.9], leftLowerArm:[0,-0.25,0.15], rightHand:[0,0,0], leftHand:[0,0,0], curl:0 },
   };
   const ARM_BONES = ['rightUpperArm','leftUpperArm','rightLowerArm','leftLowerArm','rightHand','leftHand'];
@@ -798,7 +799,7 @@ async function start(){
   let t = 0, smile = 0, gestureStart = 0, pose = 'rest', poseUntil = 5 + Math.random() * 3, gesture = null, gestureUntil = 0, lastWave = -99, clicks = 0;
   function play(name, seconds){ gesture = name; gestureStart = t; gestureUntil = t + seconds; if (name === 'wave') lastWave = t; }
   const headY = head.getWorldPosition(new THREE.Vector3()).y;
-  camera.position.set(0, headY - 0.02, 2.45); camera.lookAt(0, headY - 0.16, 0);
+  camera.position.set(0, headY - 0.05, 3.0); camera.lookAt(0, headY - 0.24, 0);
 
   // Where to look: the pointer, mapped onto a plane in front of her
   const target = new THREE.Object3D(); scene.add(target);
