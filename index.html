@@ -156,12 +156,85 @@ figure.fig figcaption b{color:var(--ink); font-weight:500}
   .links a{transition:color .2s, border-color .2s}
 }
 
+/* ambient background: drifting washes, grain, glitching grid */
+.ambient{position:fixed; inset:0; z-index:-1; overflow:hidden; pointer-events:none}
+.wash{position:absolute; border-radius:50%; filter:blur(90px); opacity:var(--wash-o,.16); will-change:transform}
+.wash.a{left:-18%; top:-14%; width:62vmax; height:62vmax; background:var(--blue); --d:34px}
+.wash.b{right:-12%; bottom:-18%; width:58vmax; height:52vmax; background:var(--violet); --d:58px}
+.wash > i{display:block; width:100%; height:100%; border-radius:50%; background:inherit}
+.grain{position:absolute; inset:-50%; opacity:var(--grain-o,.05); background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.gridfx{position:absolute; right:0; bottom:0; width:380px; height:340px; -webkit-mask-image:radial-gradient(circle 200px at calc(100% - 140px) calc(100% - 110px),#000 0%,#000 24%,transparent 100%); mask-image:radial-gradient(circle 200px at calc(100% - 140px) calc(100% - 110px),#000 0%,#000 24%,transparent 100%)}
+.gridfx i{position:absolute; inset:0; background-size:44px 44px; background-image:linear-gradient(to right,var(--g) 1px,transparent 1px),linear-gradient(to bottom,var(--g) 1px,transparent 1px)}
+.gridfx i:nth-child(1){--g:var(--blue); opacity:.22}
+.gridfx i:nth-child(2){--g:var(--violet); opacity:.12}
+.gridfx i:nth-child(3){--g:var(--blue); opacity:0}
+@media (max-width:1023px){.gridfx{display:none}}
+@media (prefers-color-scheme:dark){:root{--wash-o:.13; --grain-o:.07}}
+
+/* scroll progress */
+.progress{position:fixed; left:0; right:0; top:0; height:2px; z-index:20; transform-origin:0 50%; transform:scaleX(0); background:linear-gradient(90deg,var(--muted),var(--blue),var(--violet)); pointer-events:none}
+
+/* rotating "building" line */
+.building{font:500 13px/1.5 var(--mono); letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin:-6px 0 22px; min-height:1.5em}
+.building b{font-weight:500; color:var(--ink)}
+.building .typed{color:var(--blue)}
+.building .caret{display:inline-block; width:3px; height:.95em; margin-left:3px; vertical-align:-1px; background:var(--violet)}
+
+/* highlighted terms */
+.term{font-family:var(--mono); font-size:.88em; font-weight:500; color:var(--ink); padding:1px 6px; border-radius:5px; background:color-mix(in srgb,var(--blue) 12%,transparent); white-space:nowrap}
+
+/* scroll cue */
+.hero{position:relative}
+.scroll-cue{position:absolute; left:50%; bottom:14px; transform:translateX(-50%); color:var(--muted); display:grid; place-items:center; width:40px; height:40px}
+.scroll-cue:hover{color:var(--ink)}
+@media (max-width:880px){.scroll-cue{display:none}}
+
+/* custom cursor (mouse users only) */
+.cur-ring,.cur-dot{position:fixed; left:0; top:0; z-index:100; pointer-events:none; border-radius:50%; opacity:0}
+.cur-ring{width:30px; height:30px; margin:-15px 0 0 -15px; border:1.5px solid var(--blue); transition:width .25s cubic-bezier(.2,.8,.3,1.4), height .25s cubic-bezier(.2,.8,.3,1.4), margin .25s cubic-bezier(.2,.8,.3,1.4), opacity .3s}
+.cur-dot{width:6px; height:6px; margin:-3px 0 0 -3px; background:var(--violet); transition:opacity .3s}
+.cur-dot i{display:block; width:100%; height:100%; border-radius:50%; background:inherit; transition:transform .15s}
+.cursor-on .cur-ring{opacity:.6}
+.cursor-on .cur-dot{opacity:1}
+.cursor-on .cur-ring.big{width:52px; height:52px; margin:-26px 0 0 -26px; opacity:.9}
+.cur-dot.big i{transform:scale(0)}
+.cur-dot.down i{transform:scale(.5)}
+html.cursor-on, html.cursor-on *{cursor:none !important}
+
+@media (prefers-reduced-motion:no-preference){
+  @keyframes drift-a{0%,100%{transform:translate(-4%,-3%) scale(1)} 50%{transform:translate(6%,5%) scale(1.14)}}
+  @keyframes drift-b{0%,100%{transform:translate(5%,2%) scale(1.1)} 50%{transform:translate(-6%,-6%) scale(1)}}
+  @keyframes grid-a{0%,5%,100%{opacity:.22; transform:none} 6%{opacity:.4; transform:translate(-4px,1px) skew(-6deg)} 7%{opacity:.22; transform:none}}
+  @keyframes grid-b{0%,5%,100%{opacity:.12; transform:none} 6%{opacity:.28; transform:translate(6px,-1px) skew(6deg)} 7%{opacity:.12; transform:none}}
+  @keyframes grid-tear{0%,12%,100%{clip-path:inset(45% 0); opacity:0; transform:none} 13%{clip-path:inset(22% 0 60%); opacity:.45; transform:translate(16px)} 14%{opacity:0}}
+  @keyframes blink{0%,49%{opacity:1} 50%,100%{opacity:0}}
+  @keyframes bob{0%,100%{transform:translateY(0)} 50%{transform:translateY(8px)}}
+  .wash.a > i{animation:drift-a 30s ease-in-out infinite}
+  .wash.b > i{animation:drift-b 38s ease-in-out infinite}
+  .wash{transform:translate(calc(var(--mx,0)*var(--d)),calc(var(--my,0)*var(--d))); transition:transform 1.2s cubic-bezier(.2,.7,.2,1)}
+  .gridfx i:nth-child(1){animation:grid-a 5.5s infinite}
+  .gridfx i:nth-child(2){animation:grid-b 4.7s infinite}
+  .gridfx i:nth-child(3){animation:grid-tear 6.3s infinite}
+  .building .caret{animation:blink 1.1s infinite}
+  .scroll-cue svg{animation:bob 1.8s ease-in-out infinite}
+  .hero .building{animation:rise .9s .13s cubic-bezier(.2,.7,.2,1) both}
+}
+@media (prefers-reduced-motion:reduce){.wash{display:none}}
+
 footer{border-top:1px solid var(--line); padding:28px 0 40px; font:400 13px/1.6 var(--mono); color:var(--muted)}
 footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10px}
 </style>
 </head>
 <body>
 <a class="skip" href="#projects">Skip to projects</a>
+<div class="ambient" aria-hidden="true">
+  <div class="wash a"><i></i></div>
+  <div class="wash b"><i></i></div>
+  <div class="grain"></div>
+  <div class="gridfx"><i></i><i></i><i></i></div>
+</div>
+<div class="progress" aria-hidden="true"></div>
+<div class="cur-ring" aria-hidden="true"></div><div class="cur-dot" aria-hidden="true"><i></i></div>
 
 <header class="site-head">
   <div class="wrap">
@@ -181,7 +254,8 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
       <div>
         <span class="badge"><i></i>Open to collaborators</span>
         <h1>AI <span class="grad">Collective</span> Lab</h1>
-        <p class="lede">A small group building machine-learning projects together. Every project ships with <strong>its code, its numbers, and the cases where the model gets it wrong.</strong></p>
+        <p class="building"><b>Building</b> &nbsp;<span class="typed">brain tumour segmentation</span><span class="caret" aria-hidden="true"></span></p>
+        <p class="lede">A small group building <span class="term">machine-learning</span> projects together. Every project ships with <strong>its code, its numbers, and the cases where the model gets it wrong.</strong></p>
         <div class="ctas">
           <a class="btn primary" href="#projects">See the projects</a>
           <a class="btn ghost" href="#join">Join a project</a>
@@ -195,6 +269,7 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
         </figcaption>
       </figure>
     </div>
+    <a class="scroll-cue" href="#projects" aria-label="Scroll to projects"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg></a>
   </div>
 
   <section id="projects">
@@ -209,7 +284,7 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
             <p class="kicker"><b>Flagship</b> · Medical imaging · PyTorch</p>
             <h3 id="p-latentgat">LatentGAT</h3>
             <p class="sub">Brain tumour segmentation with graph attention at the U-Net bottleneck</p>
-            <p>A 3D U-Net whose bottleneck is treated as a graph: each latent node attends to its 5 nearest neighbours across 4 heads, so distant tumour sub-regions share context before decoding. Trained on BraTS2021 (1,251 cases), then tested on three cohorts it had never seen.</p>
+            <p>A <span class="term">3D U-Net</span> whose bottleneck is treated as a graph: each latent node attends to its 5 nearest neighbours across 4 heads, so distant tumour sub-regions share context before decoding. Trained on <span class="term">BraTS2021</span> (1,251 cases), then tested on three cohorts it had never seen.</p>
             <ul>
               <li>Checkpoint chosen by combined Dice + HD95 + NSD rank, not peak Dice alone.</li>
               <li>Failure analysis: across all 251 validation patients, 11.7% of necrotic-core voxels are labelled as edema. The worst cases are an intensified version of that same pattern.</li>
@@ -246,7 +321,7 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
           <p class="kicker">Research · Computer vision · PyTorch</p>
           <h3 id="p-balancing">GAN-balanced plant disease classification</h3>
           <p class="sub">Does generating minority-class images fix an imbalanced dataset?</p>
-          <p>A GAN generates extra leaf images for the under-represented classes of a 38-class plant disease dataset. A custom CNN is then trained on the balanced set and checked with 5-fold cross-validation.</p>
+          <p>A <span class="term">GAN</span> generates extra leaf images for the under-represented classes of a 38-class plant disease dataset. A custom <span class="term">CNN</span> is then trained on the balanced set and checked with 5-fold cross-validation.</p>
           <dl class="metrics two">
             <div><dt>Accuracy</dt><dd>98.19<small>%</small></dd></div>
             <div><dt>Macro F1</dt><dd>0.982</dd></div>
@@ -274,7 +349,7 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
           <p class="kicker">Research · Particle physics data · scikit-learn</p>
           <h3 id="p-higgs">HIGGS: logistic regression vs neural network</h3>
           <p class="sub">How much does model capacity matter at 11 million samples?</p>
-          <p>Both models were trained on 16 slices of the HIGGS collision dataset (11M events, 28 features), from 1% to 100%, to find where extra data stops paying off. The network's accuracy is already 76.6% at 30% of the data and only reaches 76.8% at 100%.</p>
+          <p>Both models were trained on 16 slices of the HIGGS collision dataset (<span class="term">11M events</span>, 28 features), from 1% to 100%, to find where extra data stops paying off. The network's accuracy is already 76.6% at 30% of the data and only reaches 76.8% at 100%.</p>
           <dl class="metrics vs">
             <div><dt>ROC-AUC</dt><dd>0.852<small>LR 0.684</small></dd></div>
             <div><dt>Accuracy</dt><dd>76.8%<small>LR 64.1%</small></dd></div>
@@ -352,7 +427,7 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
     ['3D U-Net','m',.33,.24],['Graph attention','m',.66,.20],['GAN','m',.10,.48],['CNN','m',.36,.86],
     ['MLP','m',.94,.52],['Logistic regression','m',.64,.92],['TTA','m',.58,.62],['K-fold','m',.08,.88],
     ['BraTS2021','d',.47,.08],['UCSF-PDGM','d',.84,.36],['BraTS-Africa','d',.18,.28],['Plant disease (38)','d',.30,.55],['HIGGS 11M','d',.92,.92],
-    ['M. Azeem Bhatti','u',.76,.58],['@munahilamin03','u',.12,.64]
+    ['M. Azeem Bhatti','u',.76,.58],['@munahilamin03','u',.22,.97]
   ].map(([label,t,x,y]) => ({label,t,x,y}));
   const css = () => getComputedStyle(document.documentElement);
   const v = name => css().getPropertyValue(name).trim();
@@ -462,6 +537,74 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
     e.target.querySelectorAll && e.target.querySelectorAll('.metrics dd').forEach(countUp);
   }), {threshold:.12, rootMargin:'0px 0px -6% 0px'});
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+})();
+</script>
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const root = document.documentElement;
+
+  // Scroll progress bar
+  const bar = document.querySelector('.progress');
+  let cur = 0, target = 0;
+  const readScroll = () => { const h = root.scrollHeight - innerHeight; target = h > 0 ? scrollY / h : 0; };
+  addEventListener('scroll', readScroll, {passive:true}); addEventListener('resize', readScroll); readScroll();
+  (function tick(){ cur += (target - cur) * (reduce ? 1 : .18); bar.style.transform = `scaleX(${cur.toFixed(4)})`; requestAnimationFrame(tick); })();
+
+  if (reduce) return;
+
+  // Background washes follow the mouse a little
+  addEventListener('pointermove', e => {
+    root.style.setProperty('--mx', (e.clientX / innerWidth * 2 - 1).toFixed(3));
+    root.style.setProperty('--my', (e.clientY / innerHeight * 2 - 1).toFixed(3));
+  }, {passive:true});
+
+  // Rotating "building" words, typed and deleted
+  const typed = document.querySelector('.building .typed');
+  const words = ['brain tumour segmentation', 'GAN data balancing', 'graph attention networks', 'scaling studies on 11M samples', 'models that show their failures'];
+  let w = 0, i = words[0].length, del = true;
+  setTimeout(function type(){
+    if (del) { i--; if (i <= 0) { del = false; w = (w + 1) % words.length; } }
+    else { i++; if (i >= words[w].length) { typed.textContent = words[w]; del = true; return setTimeout(type, 1900); } }
+    typed.textContent = words[w].slice(0, Math.max(0, i));
+    setTimeout(type, del ? 28 : 55);
+  }, 2200);
+
+  // Section intros brighten word by word as they scroll through the view
+  const paras = [...document.querySelectorAll('.section-intro')].map(p => {
+    const list = p.textContent.trim().split(/\s+/);
+    p.textContent = '';
+    const spans = list.map((t, k) => { const sp = document.createElement('span'); sp.textContent = t + (k < list.length - 1 ? ' ' : ''); p.appendChild(sp); return sp; });
+    return {p, spans};
+  });
+  function wordReveal(){
+    paras.forEach(({p, spans}) => {
+      const r = p.getBoundingClientRect(), start = innerHeight * .9, end = innerHeight * .55;
+      const prog = Math.min(1, Math.max(0, (start - r.top) / (start - end + r.height)));
+      spans.forEach((sp, k) => { const a = k / spans.length, b = (k + 1) / spans.length; sp.style.opacity = (.28 + .72 * Math.min(1, Math.max(0, (prog - a) / (b - a)))).toFixed(3); });
+    });
+  }
+  addEventListener('scroll', () => requestAnimationFrame(wordReveal), {passive:true}); wordReveal();
+
+  // Custom cursor: a ring that springs after the pointer and grows over links
+  if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    const ring = document.querySelector('.cur-ring'), dot = document.querySelector('.cur-dot');
+    let mx = -100, my = -100, rx = -100, ry = -100, vx = 0, vy = 0, on = false;
+    addEventListener('pointermove', e => {
+      mx = e.clientX; my = e.clientY;
+      if (!on) { on = true; root.classList.add('cursor-on'); rx = mx; ry = my; }
+      const hot = e.target instanceof Element && !!e.target.closest('a, button, canvas, [role="button"]');
+      ring.classList.toggle('big', hot); dot.classList.toggle('big', hot);
+    }, {passive:true});
+    addEventListener('pointerdown', () => dot.classList.add('down'));
+    addEventListener('pointerup', () => dot.classList.remove('down'));
+    document.addEventListener('pointerleave', () => { on = false; root.classList.remove('cursor-on'); });
+    (function follow(){
+      vx = (vx + (mx - rx) * .32) * .58; vy = (vy + (my - ry) * .32) * .58; rx += vx; ry += vy;
+      ring.style.transform = `translate(${rx}px,${ry}px)`; dot.style.transform = `translate(${mx}px,${my}px)`;
+      requestAnimationFrame(follow);
+    })();
+  }
 })();
 </script>
 </body>
