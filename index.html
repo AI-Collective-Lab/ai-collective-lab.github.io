@@ -129,6 +129,7 @@ figure.fig figcaption b{color:var(--ink); font-weight:500}
 .work .tags li{font:400 12px/1 var(--mono); padding:6px 9px; border-radius:6px; background:color-mix(in srgb,var(--violet) 10%,transparent)}
 .status{display:inline-flex; align-items:center; gap:6px; font:500 11px/1 var(--mono); letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin:0 0 14px}
 .status i{width:7px; height:7px; border-radius:50%; background:#e0a526}
+.status.done i{background:#1fae6b}
 .people{display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr)); gap:16px}
 .person{display:flex; gap:16px; align-items:center; padding:18px; background:var(--surface); border:1px solid var(--line); border-radius:14px; text-decoration:none; min-width:0}
 .person:hover{border-color:var(--blue)}
@@ -458,7 +459,7 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
     <div class="wrap">
       <p class="eyebrow">Client work</p>
       <h2>Built for Golden Gate Innovations</h2>
-      <p class="section-intro">Three projects we're building for our client <strong>Golden Gate Innovations</strong>. The code and data belong to the client, so here's what each one does rather than how it scores.</p>
+      <p class="section-intro">Three projects for our client <strong>Golden Gate Innovations</strong>: two delivered, one in progress. The code and data belong to the client, so here's what each one does rather than how it scores.</p>
       <div class="client-grid">
         <article class="work">
           <p class="status"><i></i>In progress</p>
@@ -468,14 +469,14 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
           <ul class="tags"><li>YOLO (rotated boxes)</li><li>OCR</li><li>Test-time augmentation</li></ul>
         </article>
         <article class="work">
-          <p class="status"><i></i>In progress</p>
+          <p class="status done"><i></i>Delivered</p>
           <p class="kicker">Speech recognition · NLP</p>
           <h3>Urdu-English meeting transcription</h3>
           <p>Transcribes meetings where people switch between Urdu and English mid-sentence, then writes a summary with action items. Progress streams live while it works, and the audio stays on the client's own infrastructure.</p>
           <ul class="tags"><li>Whisper large-v3</li><li>Code-switching</li><li>FastAPI</li><li>LLM summaries</li></ul>
         </article>
         <article class="work">
-          <p class="status"><i></i>In progress</p>
+          <p class="status done"><i></i>Delivered</p>
           <p class="kicker">NLP · Open-source intelligence</p>
           <h3>OSINT news monitor</h3>
           <p>Collects public news, Reddit threads and government press releases on a schedule. An LLM tags each item by topic and stance, and everything lands in a dashboard for analysts to review.</p>
