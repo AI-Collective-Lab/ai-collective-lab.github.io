@@ -784,7 +784,7 @@ async function start(){
   // Arm poses as [x, y, z] rotations per bone. Right arm raises with +z, left with -z; fingers curl +z (right) / -z (left).
   const POSES = {
     rest:    { rightUpperArm:[0,0.1,-1.2], leftUpperArm:[0,-0.1,1.2], rightLowerArm:[0,0.25,-0.15], leftLowerArm:[0,-0.25,0.15], rightHand:[0,0,0], leftHand:[0,0,0], curl:0.35 },
-    clasp:   { rightUpperArm:[0,0.6,-1.05], leftUpperArm:[0,-0.6,1.05], rightLowerArm:[0,1.3,0], leftLowerArm:[0,-1.3,0], rightHand:[0,0,0], leftHand:[0,0,0], curl:0.55 },
+    behind:  { rightUpperArm:[0,-0.7,-1.15], leftUpperArm:[0,0.7,1.15], rightLowerArm:[0,-1.3,0], leftLowerArm:[0,1.3,0], rightHand:[0,0,0], leftHand:[0,0,0], curl:0.3 },
     explain: { rightUpperArm:[0,1.2,-1.05], leftUpperArm:[0,-1.2,1.05], rightLowerArm:[0,0,1.2], leftLowerArm:[0,0,-1.2], rightHand:[0,0,0], leftHand:[0,0,0], curl:0.12 },
     wave:    { rightUpperArm:[0,0.95,-0.3], leftUpperArm:[0,-0.1,1.2], rightLowerArm:[0,0,1.9], leftLowerArm:[0,-0.25,0.15], rightHand:[0,0,0], leftHand:[0,0,0], curl:0 },
   };
@@ -795,7 +795,7 @@ async function start(){
   for (const n of ARM_BONES) arm[n] && arm[n].rotation.set(...cur[n]);
   vrm.update(0);
 
-  // Pose scheduler: idle alternates rest/clasp; gestures interrupt for a while, then idle resumes.
+  // Pose scheduler: idle alternates rest/hands behind back; gestures interrupt for a while, then idle resumes.
   let t = 0, smile = 0, gestureStart = 0, pose = 'rest', poseUntil = 5 + Math.random() * 3, gesture = null, gestureUntil = 0, lastWave = -99, clicks = 0;
   function play(name, seconds){ gesture = name; gestureStart = t; gestureUntil = t + seconds; if (name === 'wave') lastWave = t; }
   const headY = head.getWorldPosition(new THREE.Vector3()).y;
@@ -839,7 +839,7 @@ async function start(){
       spine.rotation.z = Math.sin(t * 0.7) * 0.02;
       // choose the active pose
       if (gesture && t > gestureUntil) gesture = null;
-      if (!gesture && t > poseUntil) { pose = pose === 'rest' ? 'clasp' : 'rest'; poseUntil = t + (pose === 'rest' ? 5 + Math.random() * 3 : 6 + Math.random() * 3); }
+      if (!gesture && t > poseUntil) { pose = pose === 'rest' ? 'behind' : 'rest'; poseUntil = t + (pose === 'rest' ? 5 + Math.random() * 3 : 6 + Math.random() * 3); }
       const goal = POSES[gesture || pose], k = 1 - Math.exp(-dt * 5);
       for (const n of ARM_BONES) for (let i = 0; i < 3; i++) cur[n][i] += (goal[n][i] - cur[n][i]) * k;
       cur.curl += (goal.curl - cur.curl) * k;
