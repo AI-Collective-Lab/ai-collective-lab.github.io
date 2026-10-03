@@ -82,6 +82,7 @@ h1 .grad{background:linear-gradient(90deg,var(--blue),var(--violet)); -webkit-ba
 section{padding:clamp(56px,8vw,96px) 0; border-top:1px solid var(--line)}
 .eyebrow{font:500 12px/1 var(--mono); letter-spacing:.12em; text-transform:uppercase; color:var(--blue); margin:0 0 14px}
 h2{font:750 clamp(30px,4.6vw,48px)/1.02 var(--display); font-stretch:118%; letter-spacing:-.025em; margin:0 0 14px}
+.section-intro strong{color:var(--ink); font-weight:600}
 .section-intro{color:var(--muted); max-width:40em; margin:0 0 44px}
 
 /* project plates */
@@ -125,6 +126,11 @@ figure.fig figcaption b{color:var(--ink); font-weight:500}
 .paper h3{font:700 clamp(20px,2.4vw,26px)/1.25 var(--display); margin:0 0 12px; max-width:40em}
 .paper .authors{font:400 13px/1.6 var(--mono); color:var(--muted); margin:0 0 16px}
 .paper .authors b{color:var(--ink); font-weight:600}
+.paper .authors a{text-decoration:none}
+.paper .team{margin-top:20px}
+.paper .team .sup{margin-left:auto}
+.paper .team .sup b{color:var(--ink); font-weight:500}
+@media (max-width:560px){.paper .team .sup{margin-left:0; flex-basis:100%}}
 .paper > p{max-width:62em}
 .paper .summary{margin:0 0 20px}
 .paper .metrics{max-width:640px}
@@ -473,13 +479,13 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
     <div class="wrap">
       <p class="eyebrow">Ongoing research</p>
       <h2>Papers under submission</h2>
-      <p class="section-intro">Two manuscripts currently submitted to journals. Results are from the submitted versions and may change in review.</p>
+      <p class="section-intro">Two manuscripts currently submitted to journals. All of our research is carried out under the supervision of <strong>Dr. Umme Zahoora</strong>. Results are from the submitted versions and may change in review.</p>
       <div class="papers">
         <article class="paper">
           <p class="status review"><i></i>Submitted · Information Fusion (Elsevier) · Aug 2026</p>
           <p class="kicker">Explainable AI · Medical imaging · Feature selection</p>
           <h3>Multi-Objective Selection of Hybrid Deep–Radiomic Features for Brain Tumor MRI Classification with Transparent Fuzzy Rule-Based Inference</h3>
-          <p class="authors"><b>Muhammad Azeem Bhatti</b>, Khadija Tul Kubra, Umme Zahoora, Tanja Pavleska, Asifullah Khan</p>
+          <p class="authors"><a href="#people"><b>Muhammad Azeem Bhatti</b></a>, Khadija Tul Kubra, Umme Zahoora, Tanja Pavleska, Asifullah Khan</p>
           <p class="summary">Combining deep CNN features with handcrafted radiomic features gives a brain-tumour classifier plenty to work with, but also thousands of redundant inputs and a decision nobody can audit. This paper narrows a pool of 2,420 hybrid features down to 25 with a new three-objective search (an opposition-based Harris Hawks extension of NSGA-II) that balances F1-score, feature count and redundancy. The chosen features feed a neuro-fuzzy classifier (ANFIS), whose if–then rules show clinicians exactly why each MRI scan was classified the way it was.</p>
           <dl class="metrics">
             <div><dt>Accuracy (CV)</dt><dd>94.45%</dd></div>
@@ -487,12 +493,16 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
             <div><dt>Features kept</dt><dd>25<small>of 2,420</small></dd></div>
           </dl>
           <ul class="tags"><li>NSGA-II</li><li>Harris Hawks optimisation</li><li>Radiomics</li><li>ANFIS</li><li>Figshare MRI</li></ul>
+          <div class="team">Lab authors
+            <a href="https://github.com/Muhammad-Azeem-Bhatti"><img src="https://github.com/Muhammad-Azeem-Bhatti.png?size=52" alt="" width="26" height="26" loading="lazy">@Muhammad-Azeem-Bhatti</a>
+            <span class="sup">Supervised by <b>Dr. Umme Zahoora</b></span>
+          </div>
         </article>
         <article class="paper">
           <p class="status review"><i></i>Submitted · Frontiers</p>
           <p class="kicker">Federated learning · Medical imaging · Segmentation</p>
           <h3>A Privacy-Preserving Federated Learning Framework with Variance-Based Aggregation and Customized U-Net for Brain Tumor Segmentation</h3>
-          <p class="authors">Sumer Iqbal, Khadija Tul Kubra, <b>Muhammad Azeem Bhatti</b>, Farquleet Farhat Gondal, Saddam Hussain Khan, Umme Zahoora</p>
+          <p class="authors">Sumer Iqbal, Khadija Tul Kubra, <a href="#people"><b>Muhammad Azeem Bhatti</b></a>, Farquleet Farhat Gondal, Saddam Hussain Khan, Umme Zahoora</p>
           <p class="summary">Hospitals can't pool patient MRIs, so tumour-segmentation models usually learn from one site's data. This framework trains a lightweight attention U-Net across institutions without moving any scans: each site trains locally, and a new aggregation method, Fed-PLM, merges the updates along their direction of greatest variation. On BraTS 2021 the federated model comes within 0.01 Dice of a model trained on all the data in one place.</p>
           <dl class="metrics">
             <div><dt>Whole-tumour Dice</dt><dd>0.885<small>federated</small></dd></div>
@@ -500,6 +510,10 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
             <div><dt>Scans shared</dt><dd>None</dd></div>
           </dl>
           <ul class="tags"><li>Federated learning</li><li>Fed-PLM aggregation</li><li>Attention U-Net</li><li>BraTS2021</li></ul>
+          <div class="team">Lab authors
+            <a href="https://github.com/Muhammad-Azeem-Bhatti"><img src="https://github.com/Muhammad-Azeem-Bhatti.png?size=52" alt="" width="26" height="26" loading="lazy">@Muhammad-Azeem-Bhatti</a>
+            <span class="sup">Supervised by <b>Dr. Umme Zahoora</b></span>
+          </div>
         </article>
       </div>
     </div>
