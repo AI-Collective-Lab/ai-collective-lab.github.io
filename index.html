@@ -555,6 +555,7 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
           <p>Reads electricity meters from field photos. A detector finds the meter's display, the crop is straightened, and five OCR models read the digits and vote. Readings they all agree on are accepted automatically, doubtful ones go to a person to check, and unreadable photos are sent back for a retake.</p>
           <dl class="metrics" style="--cols:2"><div><dt>Exact readings</dt><dd>98.2%<small>606 held-out crops, five-model vote</small></dd></div><div><dt>Auto-accepted</dt><dd>99.5%<small>correct, on 95.7% of crops</small></dd></div></dl>
           <ul class="tags"><li>YOLO11n-OBB detector</li><li>ResNet18 + BiLSTM CRNN</li><li>Five-model vote</li><li>Test-time augmentation</li></ul>
+          <div class="links" style="margin-top:12px"><a href="assets/k-electric-cv-pipeline.pdf" target="_blank" rel="noopener">How it was built (PDF) ↗</a></div>
           <div class="team">Built by
             <a href="https://ai-collective-lab.github.io/portfolio-muhammad-azeem-bhatti/"><img src="https://github.com/Muhammad-Azeem-Bhatti.png?size=52" alt="" width="26" height="26" loading="lazy">@Muhammad-Azeem-Bhatti</a>
           </div>
