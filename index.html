@@ -441,14 +441,14 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
           <p class="kicker">Research · Computer vision · PyTorch · Jan 2026</p>
           <h3 id="p-balancing">GAN-balanced plant disease classification</h3>
           <p class="sub">Does generating minority-class images fix an imbalanced dataset?</p>
-          <p>A <span class="term">GAN</span> generates extra leaf images for the under-represented classes of a 38-class plant disease dataset. A custom <span class="term">CNN</span> is then trained on the balanced set and checked with 5-fold cross-validation.</p>
+          <p>Tests whether a <span class="term">GAN</span> that generates leaf images for the rare classes of a 38-class plant disease dataset helps a classifier. A corrected re-run compares six methods at three imbalance levels (180 runs, plus two follow-up checks): plain oversampling beat every GAN design, and a pretrained <span class="term">ResNet-18</span> removed most of the imbalance problem by itself.</p>
           <dl class="metrics two">
-            <div><dt>Accuracy</dt><dd>98.19<small>%</small></dd></div>
-            <div><dt>Macro F1</dt><dd>0.982</dd></div>
-            <div><dt>5-fold F1</dt><dd>0.982<small>±.002</small></dd></div>
-            <div><dt>Classes</dt><dd>38</dd></div>
+            <div><dt>Best method</dt><dd>Oversampling<small>minority F1 .989 / .982 / .966</small></dd></div>
+            <div><dt>GAN scenarios that won</dt><dd>0 of 3<small>at every imbalance level</small></dd></div>
+            <div><dt>GAN images alone</dt><dd>.00–.80<small>minority F1, vs .97–.99 real</small></dd></div>
+            <div><dt>Training runs</dt><dd>225<small>5 seeds, 3 levels</small></dd></div>
           </dl>
-          <ul class="tags"><li>GAN</li><li>CNN</li><li>Class imbalance</li><li>K-fold</li></ul>
+          <ul class="tags"><li>GAN</li><li>CNN</li><li>Class imbalance</li><li>Negative result</li></ul>
           <div class="links">
             <a href="https://www.kaggle.com/datasets/muhammadazeemaif25/plant-disease-imbalanced-vs-gan-balanced">Dataset on Kaggle</a>
           </div>
@@ -460,8 +460,8 @@ footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10
           </div>
         </div>
         <figure class="fig">
-          <div class="frame"><img src="assets/balancing-learning-curves.webp" width="1200" height="500" loading="lazy" alt="Training and validation loss falling and accuracy rising to about 98% over 10 epochs."></div>
-          <figcaption><b>Fig. 2</b> Loss and accuracy over 10 epochs on the GAN-balanced training set.</figcaption>
+          <div class="frame"><img src="assets/balancing-results.webp" width="1200" height="500" loading="lazy" alt="Minority macro-F1 for six methods at three imbalance levels: oversampling is best everywhere and no GAN scenario beats it."></div>
+          <figcaption><b>Fig. 2</b> Minority macro-F1 by method and imbalance level (main CNN, 5 seeds). Oversampling wins at every level.</figcaption>
         </figure>
       </article>
 
